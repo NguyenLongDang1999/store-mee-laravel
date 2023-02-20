@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html
@@ -14,8 +13,11 @@
             name="viewport"
             content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
         />
+        <meta name="robots" content="noindex,nofollow">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('title') | Store-Mee-CMS</title>
         @include('layouts.backend.partial.css')
+        @yield('css')
     </head>
 
     <body>
@@ -35,7 +37,9 @@
                     <!-- Content wrapper -->
                     <div class="content-wrapper">
                         <!-- Content -->
-                        @yield('content')
+                        <div class="container-xxl flex-grow-1 container-p-y">
+                            @yield('content')
+                        </div>
                         <!-- / Content -->
 
                         <div class="content-backdrop fade"></div>
@@ -54,5 +58,7 @@
         <!-- / Layout wrapper -->
 
         @include('layouts.backend.partial.js')
+        @yield('js')
+        <script src="../../assets/core.js"></script>
     </body>
 </html>

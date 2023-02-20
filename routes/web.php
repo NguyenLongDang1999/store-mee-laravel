@@ -32,12 +32,19 @@ Route::prefix('cms-admin')->name('admin.')->group(function () {
         ->name('category.')
         ->prefix('category')
         ->group(function () {
+            // List
             Route::get('/', 'index')->name('index');
+            Route::get('get-list', 'getList')->name('getList');
+
+            // Create
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+
+            // Edit
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+
+            // Exists
+            Route::post('exist-data', 'checkExistData')->name('checkExistData');
         });
 });
-
-//Route::name('admin.')->group(function () {
-//    Route::get('/users', function () {
-//        // Route assigned name "admin.users"...
-//    })->name('users');
-//});
