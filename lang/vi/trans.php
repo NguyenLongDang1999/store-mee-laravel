@@ -6,6 +6,7 @@ return [
     ],
     'category' => [
         'manager' => 'Quản lý danh mục',
+        'manager_recycle' => 'Quản lý danh mục (Thùng rác)',
         'name' => 'Danh mục',
         'title' => 'Tiêu đề danh mục',
         'parent' => 'Danh mục cha',
@@ -33,6 +34,8 @@ return [
         'search' => 'Tìm kiếm',
         'reset' => 'Làm mới',
         'create' => 'Thêm mới',
+        'recycle' => 'Thùng rác',
+        'restore' => 'Khôi phục',
         'update' => 'Cập nhật',
         'back' => 'Quay lại',
         'save' => 'Lưu lại'

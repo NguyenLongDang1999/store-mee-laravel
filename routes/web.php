@@ -36,6 +36,9 @@ Route::prefix('cms-admin')->name('admin.')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('get-list', 'getList')->name('getList');
 
+            // Recycle List
+            Route::get('recycle', 'recycle')->name('recycle');
+
             // Create
             Route::get('create', 'create')->name('create');
             Route::post('store', 'store')->name('store');
@@ -43,6 +46,12 @@ Route::prefix('cms-admin')->name('admin.')->group(function () {
             // Edit
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('update/{id}', 'update')->name('update');
+
+            // Delete
+            Route::post('delete/{id}', 'delete')->name('delete');
+
+            // Restore
+            Route::post('restore/{id}', 'restore')->name('restore');
 
             // Exists
             Route::post('exist-data', 'checkExistData')->name('checkExistData');

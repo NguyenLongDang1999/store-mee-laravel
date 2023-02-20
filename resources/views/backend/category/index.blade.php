@@ -82,6 +82,13 @@
                             "value": $('#frmSearch select[name="search[popular]"]').val()
                         });
                     }
+
+                    @isset($isRecyclePage)
+                    aoData.push({
+                        "name": "search[withTrashed]",
+                        "value": 1
+                    });
+                    @endisset
                 },
                 columnDefs: [
                     {
@@ -102,6 +109,7 @@
                             let $name = full['name'],
                                 $editPages = full['edit_pages'],
                                 $image = full['image_uri'];
+
                             return '<div class="d-flex justify-content-start align-items-center user-name">' +
                                 '<div class="avatar-wrapper">' +
                                 '<div class="avatar avatar-sm me-3">' +
@@ -125,6 +133,7 @@
                             let $name = full['parentName'],
                                 $editPages = full['edit_pages_parent'],
                                 $image = full['imageUriParent'];
+
                             return '<div class="d-flex justify-content-start align-items-center user-name">' +
                                 '<div class="avatar-wrapper">' +
                                 '<div class="avatar avatar-sm me-3">' +
@@ -193,15 +202,29 @@
                         targets: -1,
                         title: 'Thao Tác',
                         render: function (data, type, full) {
-                            const $editPages = full['edit_pages'],
-                                $delete = full['delete'],
-                                $id = full['id'];
+                            @isset($isRecyclePage)
+                            const $restore = full['restore'];
+
                             return (
-                                '<a href=' + $editPages + ' class="btn btn-sm btn-icon item-edit me-2"><i class="bx bxs-edit"></i></a>' +
-                                '<a href="javascript:void(0)" class="btn btn-sm btn-icon item-edit" data-bs-toggle="modal" data-bs-target="#action-dialog" data-id=' + $id + ' data-action=' + $delete + '>' +
-                                '<i class="bx bxs-trash"></i>' +
-                                '</a>'
+                                '<div class="d-flex">' +
+                                '<form action=' + $restore + ' method="POST">@csrf ' +
+                                '<button type="submit" class="btn btn-sm btn-icon"><i class="ti ti-refresh"></i></button>' +
+                                '</form>' +
+                                '</div>'
                             );
+                            @else
+                            const $editPages = full['edit_pages'],
+                                $delete = full['delete'];
+
+                            return (
+                                '<div class="d-flex">' +
+                                '<a href=' + $editPages + ' class="btn btn-sm btn-icon item-edit me-2"><i class="ti ti-edit"></i></a>' +
+                                '<form action=' + $delete + ' method="POST">@csrf ' +
+                                '<button type="submit" class="btn btn-sm btn-icon"><i class="ti ti-trash"></i></button>' +
+                                '</form>' +
+                                '</div>'
+                            );
+                            @endisset
                         }
                     }
                 ],
@@ -269,14 +292,32 @@
 @endsection
 
 @section('content')
-    <h4 class="fw-semibold mb-4 text-uppercase">{{ __('trans.category.manager')  }}</h4>
+    <h4 class="fw-semibold mb-4 text-uppercase">
+        @isset($isRecyclePage)
+            {{ __('trans.category.manager_recycle') }}
+        @else
+            {{ __('trans.category.manager') }}
+        @endisset
+    </h4>
 
     <div class="row g-4">
         <div class="col-12">
-            <a href="{{ route('admin.category.create') }}" class="btn btn-primary text-capitalize">
-                <span class="ti-xs ti ti-plus me-1"></span>
-                {{ __('trans.btn.create') }}
-            </a>
+            @isset($isRecyclePage)
+                <a href="{{ route('admin.category.index') }}" class="btn btn-secondary text-capitalize">
+                    <span class="ti-xs ti ti-arrow-bar-to-left me-1"></span>
+                    {{ __('trans.btn.back') }}
+                </a>
+            @else
+                <a href="{{ route('admin.category.create') }}" class="btn btn-primary text-capitalize">
+                    <span class="ti-xs ti ti-plus me-1"></span>
+                    {{ __('trans.btn.create') }}
+                </a>
+
+                <a href="{{ route('admin.category.recycle') }}" class="btn btn-secondary text-capitalize">
+                    <span class="ti-xs ti ti-trash"></span>
+                    {{ __('trans.btn.recycle') }}
+                </a>
+            @endisset
         </div>
 
         <div class="col-12">

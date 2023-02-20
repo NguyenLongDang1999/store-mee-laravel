@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    private string $path;
-    private Category $category;
+    protected string $path;
+    protected Category $category;
 
     public function __construct(Category $category)
     {
@@ -21,6 +21,13 @@ class CategoryController extends Controller
 
     public function index()
     {
+        $data['getCategoryList'] = $this->getCategoryList();
+        return view('backend.category.index', $data);
+    }
+
+    public function recycle()
+    {
+        $data['isRecyclePage'] = true;
         $data['getCategoryList'] = $this->getCategoryList();
         return view('backend.category.index', $data);
     }
@@ -88,12 +95,35 @@ class CategoryController extends Controller
                     'updated_at' => $item->updated_at->format('d-m-Y'),
                     'edit_pages' => route('admin.category.edit', $item->id),
                     'edit_pages_parent' => $item->parentID ? route('admin.category.edit', $item->parentID) : '',
-                    'delete' => '',
+                    'delete' => route('admin.category.delete', $item->id),
+                    'restore' => route('admin.category.restore', $item->id)
                 ];
             }
         }
 
         return response()->json($data);
+    }
+
+    public function delete(int $id)
+    {
+        $category = $this->category->getCategoryFind($id);
+
+        if ($category->delete()) {
+            return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+        }
+
+        return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
+    }
+
+    public function restore(int $id)
+    {
+        $category = $this->category->getCategoryFind($id);
+
+        if ($category->restore()) {
+            return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+        }
+
+        return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function checkExistData(Request $request)
