@@ -1,5 +1,48 @@
 <?php
 
+function adminMenu(): array
+{
+    return [
+        'manage-dashboard' => [
+            'title' => '',
+            'content' => [
+                [
+                    'key' => config('constant.route.dashboard'),
+                    'title' => __('trans.dashboard.name'),
+                    'icon' => 'ti ti-home',
+                    'href' => route('admin.dashboard.index')
+                ]
+            ]
+        ],
+        'manage-product' => [
+            'title' => __('trans.product.manager'),
+            'content' => [
+                [
+                    'key' => config('constant.route.category'),
+                    'title' => __('trans.category.name'),
+                    'icon' => 'ti ti-category',
+                    'href' => route('admin.category.index')
+                ],
+                [
+                    'key' => config('constant.route.brand'),
+                    'title' => __('trans.brand.name'),
+                    'icon' => 'ti ti-trademark',
+                    'href' => route('admin.brand.index')
+                ]
+            ]
+        ]
+    ];
+}
+
+function activeMenu(string $key): string
+{
+    if (request()->routeIs('admin.' . $key . '.*')) {
+        return 'active';
+    }
+
+    return '';
+}
+
 function optionStatus(): array
 {
     return [

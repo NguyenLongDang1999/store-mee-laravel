@@ -14,6 +14,7 @@ return [
         'error' => 'error',
     ],
     'route' => [
+        'dashboard' => 'dashboard',
         'category' => 'category',
         'brand' => 'brand'
     ],

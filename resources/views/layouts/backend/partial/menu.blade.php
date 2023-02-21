@@ -43,29 +43,23 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-        <li class="menu-item">
-            <a href="{{ route('admin.dashboard.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-home"></i>
-                <div class="text-capitalize">{{ __('trans.dashboard.name') }}</div>
-            </a>
-        </li>
+        @foreach(adminMenu() as $menu)
+            @if(!empty($menu['title']))
+                <li class="menu-header small text-uppercase">
+                    <span class="menu-header-text">{{ $menu['title'] }}</span>
+                </li>
+            @endif
 
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">{{ __('trans.product.manager') }}</span>
-        </li>
-
-        <li class="menu-item">
-            <a href="{{ route('admin.category.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-category"></i>
-                <div class="text-capitalize">{{ __('trans.category.name') }}</div>
-            </a>
-        </li>
-
-        <li class="menu-item">
-            <a href="{{ route('admin.brand.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-trademark"></i>
-                <div class="text-capitalize">{{ __('trans.brand.name') }}</div>
-            </a>
-        </li>
+            @if(count($menu['content']))
+                @foreach($menu['content'] as $content)
+                    <li class="menu-item {{ activeMenu($content['key']) }}">
+                        <a href="{{ $content['href'] }}" class="menu-link">
+                            <i class="menu-icon tf-icons {{ $content['icon'] }}"></i>
+                            <div class="text-capitalize">{{ $content['title'] }}</div>
+                        </a>
+                    </li>
+                @endforeach
+            @endif
+        @endforeach
     </ul>
 </aside>
