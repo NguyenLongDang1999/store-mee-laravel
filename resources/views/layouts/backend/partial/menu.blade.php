@@ -43,14 +43,28 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
+        <li class="menu-item">
+            <a href="{{ route('admin.dashboard.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-home"></i>
+                <div class="text-capitalize">{{ __('trans.dashboard.name') }}</div>
+            </a>
+        </li>
+
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">{{ __('trans.product.manager') }}</span>
         </li>
 
         <li class="menu-item">
             <a href="{{ route('admin.category.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-mail"></i>
+                <i class="menu-icon tf-icons ti ti-category"></i>
                 <div class="text-capitalize">{{ __('trans.category.name') }}</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="{{ route('admin.brand.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-trademark"></i>
+                <div class="text-capitalize">{{ __('trans.brand.name') }}</div>
             </a>
         </li>
     </ul>

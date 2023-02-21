@@ -59,6 +59,6 @@
 
         @include('layouts.backend.partial.js')
         @yield('js')
-        <script src="../../assets/core.js"></script>
+        <script src="{{ asset('assets/core.js') }}"></script>
     </body>
 </html>

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CategoryRequest extends FormRequest
+class BrandRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,17 +26,14 @@ class CategoryRequest extends FormRequest
             'name' => [
                 'required',
                 'max:50',
-                Rule::unique('category')->ignore($this->id),
+                Rule::unique('brand')->ignore($this->id),
             ],
             'slug' => 'nullable',
             'status' => 'nullable',
             'popular' => 'nullable',
             'image_uri' => 'nullable|image|mimes:jpg,jpeg,png,gif',
-            'parent_id' => 'nullable',
-            'description' => 'max:160',
-            'meta_title' => 'max:60',
-            'meta_keyword' => 'max:60',
-            'meta_description' => 'max:160',
+            'category_id' => 'nullable',
+            'description' => 'max:160'
         ];
     }
 
@@ -54,12 +51,9 @@ class CategoryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('trans.category.title'),
+            'name' => __('trans.brand.title'),
             'image_uri' => __('trans.image.name'),
-            'description' => __('trans.description'),
-            'meta_title' => __('trans.meta.title'),
-            'meta_keyword' => __('trans.meta.keyword'),
-            'meta_description' => __('trans.meta.description'),
+            'description' => __('trans.description')
         ];
     }
 

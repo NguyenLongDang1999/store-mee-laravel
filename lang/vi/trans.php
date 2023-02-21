@@ -2,7 +2,10 @@
 
 return [
     'product' => [
-        'manager' => 'Quản lý sản phẩm'
+        'manager' => 'Quản lý sản phẩm',
+    ],
+    'dashboard' => [
+        'name' => 'Thống kê'
     ],
     'category' => [
         'manager' => 'Quản lý danh mục',
@@ -14,21 +17,30 @@ return [
         'create' => 'Thêm mới danh mục',
         'update' => 'Cập nhật danh mục',
     ],
+    'brand' => [
+        'manager' => 'Quản lý thương hiệu',
+        'manager_recycle' => 'Quản lý thương hiệu (Thùng rác)',
+        'name' => 'Thương hiệu',
+        'title' => 'Tiêu đề thương hiệu',
+        'list' => 'Danh sách thương hiệu',
+        'create' => 'Thêm mới thương hiệu',
+        'update' => 'Cập nhật thương hiệu',
+    ],
     'status' => [
         'name' => 'Trạng thái',
         'active' => 'Đang hoạt động',
-        'inactive' => 'Không hoạt động'
+        'inactive' => 'Không hoạt động',
     ],
     'popular' => [
         'name' => 'Phổ biến',
         'active' => 'Đang phổ biến',
-        'inactive' => 'Không phổ biến'
+        'inactive' => 'Không phổ biến',
     ],
     'meta' => [
         'seo' => 'Meta SEO',
         'title' => 'Meta Title',
         'keyword' => 'Meta Keyword',
-        'description' => 'Meta Description'
+        'description' => 'Meta Description',
     ],
     'btn' => [
         'search' => 'Tìm kiếm',
@@ -38,10 +50,10 @@ return [
         'restore' => 'Khôi phục',
         'update' => 'Cập nhật',
         'back' => 'Quay lại',
-        'save' => 'Lưu lại'
+        'save' => 'Lưu lại',
     ],
     'image' => [
-        'name' => 'Hình đại diện'
+        'name' => 'Hình đại diện',
     ],
     'message' => [
         'success' => 'Dữ liệu đã được lưu thành công!',
@@ -68,5 +80,5 @@ return [
     'created_at' => 'Ngày tạo',
     'updated_at' => 'Ngày sửa',
     'action' => 'Thao tác',
-    'description' => 'Mô tả'
+    'description' => 'Mô tả',
 ];

@@ -1,6 +1,6 @@
 @extends('layouts.backend.index')
 
-@section('title', __('trans.category.manager'))
+@section('title', __('trans.brand.manager'))
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
@@ -25,7 +25,7 @@
                 "bServerSide": true,
                 "bProcessing": true,
                 "sPaginationType": "full_numbers",
-                "sAjaxSource": "{{ route('admin.category.getList') }}",
+                "sAjaxSource": "{{ route('admin.brand.getList') }}",
                 "bDeferRender": true,
                 "bFilter": false,
                 "bDestroy": true,
@@ -44,7 +44,7 @@
                         data: 'name'
                     },
                     {
-                        data: 'parent_id'
+                        data: 'category_id'
                     },
                     {
                         data: 'status'
@@ -70,8 +70,8 @@
                             "value": $('#frmSearch input[name="search[name]"]').val()
                         });
                         aoData.push({
-                            "name": "search[parent_id]",
-                            "value": $('#frmSearch select[name="search[parent_id]"]').val()
+                            "name": "search[category_id]",
+                            "value": $('#frmSearch select[name="search[category_id]"]').val()
                         });
                         aoData.push({
                             "name": "search[status]",
@@ -130,9 +130,10 @@
                         targets: 2,
                         responsivePriority: 4,
                         render: function (data, type, full, meta) {
-                            let $name = full['parentName'],
-                                $editPages = full['edit_pages_parent'],
-                                $image = full['imageUriParent'];
+                            let $name = full['categoryName'],
+                                $id = full['categoryID'],
+                                $editPages = full['edit_pages_category'],
+                                $image = full['imageUriCategory'];
 
                             if (!$editPages) {
                                 return ''
@@ -298,26 +299,26 @@
 @section('content')
     <h4 class="fw-semibold mb-4 text-uppercase">
         @isset($isRecyclePage)
-            {{ __('trans.category.manager_recycle') }}
+            {{ __('trans.brand.manager_recycle') }}
         @else
-            {{ __('trans.category.manager') }}
+            {{ __('trans.brand.manager') }}
         @endisset
     </h4>
 
     <div class="row g-4">
         <div class="col-12">
             @isset($isRecyclePage)
-                <a href="{{ route('admin.category.index') }}" class="btn btn-secondary text-capitalize">
+                <a href="{{ route('admin.brand.index') }}" class="btn btn-secondary text-capitalize">
                     <span class="ti-xs ti ti-arrow-bar-to-left me-1"></span>
                     {{ __('trans.btn.back') }}
                 </a>
             @else
-                <a href="{{ route('admin.category.create') }}" class="btn btn-primary text-capitalize">
+                <a href="{{ route('admin.brand.create') }}" class="btn btn-primary text-capitalize">
                     <span class="ti-xs ti ti-plus me-1"></span>
                     {{ __('trans.btn.create') }}
                 </a>
 
-                <a href="{{ route('admin.category.recycle') }}" class="btn btn-secondary text-capitalize">
+                <a href="{{ route('admin.brand.recycle') }}" class="btn btn-secondary text-capitalize">
                     <span class="ti-xs ti ti-trash"></span>
                     {{ __('trans.btn.recycle') }}
                 </a>
@@ -329,15 +330,15 @@
                 <h5 class="card-header text-uppercase">{{ __('trans.search') }}</h5>
 
                 <div class="card-body">
-                    {{ html()->form('GET', route('admin.category.getList'))->class('row g-3')->id('frmSearch')->attribute('onsubmit', 'return false')->open() }}
+                    {{ html()->form('GET', route('admin.brand.getList'))->class('row g-3')->id('frmSearch')->attribute('onsubmit', 'return false')->open() }}
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.category.title'), 'search[name]')->class('text-capitalize') }}
+                        {{ html()->label(__('trans.brand.title'), 'search[name]')->class('text-capitalize') }}
                         {{ html()->text('search[name]')->class('form-control')  }}
                     </div>
 
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.category.name'), 'search[parent_id]')->class('text-capitalize') }}
-                        {{ html()->select('search[parent_id]', $getCategoryList)->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
+                        {{ html()->label(__('trans.category.name'), 'search[category_id]')->class('text-capitalize') }}
+                        {{ html()->select('search[category_id]', $getCategoryList)->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-md-6">
@@ -362,7 +363,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header border-bottom">
-                    <h5 class="card-title mb-0 text-uppercase">{{ __('trans.category.list') }}</h5>
+                    <h5 class="card-title mb-0 text-uppercase">{{ __('trans.brand.list') }}</h5>
                 </div>
 
                 <div class="card-datatable table-responsive">
@@ -371,7 +372,7 @@
                             <tr>
                                 <th></th>
                                 <th>{{ __('trans.info') }}</th>
-                                <th>{{ __('trans.category.parent') }}</th>
+                                <th>{{ __('trans.category.name') }}</th>
                                 <th>{{ __('trans.status.name') }}</th>
                                 <th>{{ __('trans.popular.name') }}</th>
                                 <th>{{ __('trans.created_at') }}</th>

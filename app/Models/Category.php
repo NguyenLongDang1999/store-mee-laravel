@@ -24,7 +24,7 @@ class Category extends Model
         'popular',
         'meta_title',
         'meta_keyword',
-        'meta_description'
+        'meta_description',
     ];
 
     public function children(): HasMany
@@ -32,43 +32,41 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id', 'id');
     }
 
-    public function getList(array $input = array()): array
+    public function getList(array $input = []): array
     {
         $query = Category::leftJoin('category as parent', 'parent.id', '=', 'category.parent_id');
 
-        if (isset($input['search']['name']) && $input['search']['name'] != "") {
-            $query->where('category.name', 'LIKE', '%' . trim($input['search']['name'] . '%'));
+        if (isset($input['search']['name']) && $input['search']['name'] != '') {
+            $query->where('category.name', 'LIKE', '%'.trim($input['search']['name'].'%'));
         }
 
-        if (isset($input['search']['parent_id']) && $input['search']['parent_id'] != "") {
+        if (isset($input['search']['parent_id']) && $input['search']['parent_id'] != '') {
             $query->where('category.parent_id', $input['search']['parent_id']);
         }
 
-        if (isset($input['search']['status']) && $input['search']['status'] != "") {
+        if (isset($input['search']['status']) && $input['search']['status'] != '') {
             $query->where('category.status', $input['search']['status']);
         }
 
-        if (isset($input['search']['popular']) && $input['search']['popular'] != "") {
+        if (isset($input['search']['popular']) && $input['search']['popular'] != '') {
             $query->where('category.popular', $input['search']['popular']);
         }
 
-        if (isset($input['search']['withTrashed'])) {
-            $query->onlyTrashed();
-        }
+        if (isset($input['search']['onlyTrashed'])) $query->onlyTrashed();
 
         $result['total'] = $query->count();
 
         if (isset($input['iSortCol_0'])) {
-            $sorting_mapping_array = array(
+            $sorting_mapping_array = [
                 '1' => 'category.name',
                 '2' => 'parent.name',
                 '3' => 'category.status',
                 '4' => 'category.popular',
                 '5' => 'category.created_at',
                 '6' => 'category.updated_at',
-            );
+            ];
 
-            $order = "desc";
+            $order = 'desc';
             if (isset($input['sSortDir_0'])) {
                 $order = $input['sSortDir_0'];
             }
@@ -88,7 +86,7 @@ class Category extends Model
             'category.updated_at',
             'parent.name as parentName',
             'parent.id as parentID',
-            'parent.image_uri as parentImage'
+            'parent.image_uri as parentImage',
         ]);
 
         return $result;
@@ -122,7 +120,7 @@ class Category extends Model
             'popular',
             'meta_title',
             'meta_keyword',
-            'meta_description'
+            'meta_description',
         ]);
     }
 }

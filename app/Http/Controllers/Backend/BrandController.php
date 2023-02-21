@@ -3,26 +3,29 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\BrandRequest;
+use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class BrandController extends Controller
 {
     protected string $path;
 
+    protected Brand $brand;
     protected Category $category;
 
-    public function __construct(Category $category)
+    public function __construct(Brand $brand, Category $category)
     {
-        $this->path = config('constant.route.category');
+        $this->path = config('constant.route.brand');
+        $this->brand = $brand;
         $this->category = $category;
     }
 
     public function index()
     {
         $data['getCategoryList'] = $this->getCategoryList();
-        return view('backend.category.index', $data);
+        return view('backend.brand.index', $data);
     }
 
     public function recycle()
@@ -30,55 +33,55 @@ class CategoryController extends Controller
         $data['isRecyclePage'] = true;
         $data['getCategoryList'] = $this->getCategoryList();
 
-        return view('backend.category.index', $data);
+        return view('backend.brand.index', $data);
     }
 
     public function create()
     {
-        $data['router'] = route('admin.category.store');
+        $data['router'] = route('admin.brand.store');
         $data['getCategoryList'] = $this->getCategoryList();
 
-        return view('backend.category.create_edit', $data);
+        return view('backend.brand.create_edit', $data);
     }
 
-    public function store(CategoryRequest $request)
+    public function store(BrandRequest $request)
     {
         $input = $request->validated();
         $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
 
-        if ($this->category->fill($input)->save()) {
-            return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+        if ($this->brand->fill($input)->save()) {
+            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
         }
 
-        return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
+        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function edit($id)
     {
-        $data['router'] = route('admin.category.update', $id);
-        $data['row'] = $this->category->getCategoryDetail($id);
+        $data['router'] = route('admin.brand.update', $id);
+        $data['row'] = $this->brand->getBrandDetail($id);
         $data['getCategoryList'] = $this->getCategoryList();
 
-        return view('backend.category.create_edit', $data);
+        return view('backend.brand.create_edit', $data);
     }
 
-    public function update(CategoryRequest $request, int $id)
+    public function update(BrandRequest $request, int $id)
     {
         $input = $request->validated();
-        $category = $this->category->getCategoryFind($id);
+        $brand = $this->brand->getBrandFind($id);
         $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
 
-        if ($category->fill($input)->save()) {
-            return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+        if ($brand->fill($input)->save()) {
+            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
         }
 
-        return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
+        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function getList(Request $request)
     {
         $input = $request->input();
-        $results = $this->category->getList($input);
+        $results = $this->brand->getList($input);
 
         $data = [];
         $data['iTotalRecords'] = $data['iTotalDisplayRecords'] = $results['total'];
@@ -89,17 +92,17 @@ class CategoryController extends Controller
                 $data['aaData'][] = [
                     'id' => $item->id,
                     'image_uri' => getFile($item->image_uri),
-                    'imageUriParent' => getFile($item->parentImage),
+                    'imageUriCategory' => getFile($item->categoryImage),
                     'name' => e(str()->limit($item->name, 20)),
-                    'parentName' => e(str()->limit($item->parentName, 20)) ?? '-',
+                    'categoryName' => e(str()->limit($item->categoryName, 20)) ?? '-',
                     'status' => $item->status,
                     'popular' => $item->popular,
                     'created_at' => $item->created_at->format('d-m-Y'),
                     'updated_at' => $item->updated_at->format('d-m-Y'),
-                    'edit_pages' => route('admin.category.edit', $item->id),
-                    'edit_pages_parent' => $item->parentID ? route('admin.category.edit', $item->parentID) : '',
-                    'delete' => route('admin.category.delete', $item->id),
-                    'restore' => route('admin.category.restore', $item->id),
+                    'edit_pages' => route('admin.brand.edit', $item->id),
+                    'edit_pages_category' => $item->categoryID ? route('admin.category.edit', $item->categoryID) : '',
+                    'delete' => route('admin.brand.delete', $item->id),
+                    'restore' => route('admin.brand.restore', $item->id),
                 ];
             }
         }
@@ -109,31 +112,31 @@ class CategoryController extends Controller
 
     public function delete(int $id)
     {
-        $category = $this->category->getCategoryFind($id);
+        $brand = $this->brand->getBrandFind($id);
 
-        if ($category->delete()) {
-            return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+        if ($brand->delete()) {
+            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
         }
 
-        return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
+        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function restore(int $id)
     {
-        $category = $this->category->getCategoryFind($id);
+        $brand = $this->brand->getBrandFind($id);
 
-        if ($category->restore()) {
-            return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+        if ($brand->restore()) {
+            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
         }
 
-        return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
+        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function checkExistData(Request $request)
     {
         $input = $request->only(['name']);
         $input['slug'] = str()->slug($input['name']);
-        $result = $this->category->checkExistData($input);
+        $result = $this->brand->checkExistData($input);
         $isValid = ! ($result > 0);
 
         return response()->json([
@@ -144,7 +147,7 @@ class CategoryController extends Controller
     private function getCategoryList(): array
     {
         $getCategoryList = $this->category->getCategoryRecursive();
-        $option = ['' => __('trans.category.parent')];
+        $option = ['' => __('trans.empty')];
 
         $dash = '';
 

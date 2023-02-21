@@ -59,7 +59,7 @@ return [
             'driver' => 'bunnycdn',
             'storage_zone' => env('BUNNYCDN_STORAGE_ZONE'),
             'api_key' => env('BUNNYCDN_APY_KEY'),
-            'region' => env('BUNNYCDN_REGION', \PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNRegion::DEFAULT)
+            'region' => env('BUNNYCDN_REGION', \PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNRegion::DEFAULT),
         ],
     ],
 

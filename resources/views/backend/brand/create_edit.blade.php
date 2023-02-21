@@ -1,6 +1,6 @@
 @extends('layouts.backend.index')
 
-@section('title', isset($row) ? __('trans.category.update') . ': ' . $row->name : __('trans.category.create'))
+@section('title', isset($row) ? __('trans.brand.update') . ': ' . $row->name : __('trans.brand.create'))
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
@@ -16,17 +16,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             (function () {
-                const categoryForm = document.getElementById('category-form'),
+                const brandForm = document.getElementById('brand-form'),
                     meteCSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     nameLabel = document.querySelector('label[for=name]')?.textContent,
                     descriptionLabel = document.querySelector('label[for=description]')?.textContent,
-                    metaTitleLabel = document.querySelector('label[for=meta_title]')?.textContent,
-                    metaKeywordLabel = document.querySelector('label[for=meta_keyword]')?.textContent,
-                    metaDescriptionLabel = document.querySelector('label[for=meta_description]')?.textContent,
                     requiredValidate = ' không được bỏ trống.',
                     maxValidate = ' không được vượt quá 160 ký tự.'
 
-                FormValidation.formValidation(categoryForm, {
+                FormValidation.formValidation(brandForm, {
                     fields: {
                         name: {
                             validators: {
@@ -45,11 +42,11 @@
                                     method: 'POST',
                                     data: function () {
                                         return {
-                                            name: categoryForm.querySelector('[name="name"]').value,
-                                            id: categoryForm.querySelector('[name="id"]').value
+                                            name: brandForm.querySelector('[name="name"]').value,
+                                            id: brandForm.querySelector('[name="id"]').value
                                         };
                                     },
-                                    url: "{{ route('admin.category.checkExistData') }}"
+                                    url: "{{ route('admin.brand.checkExistData') }}"
                                 },
                             }
                         },
@@ -58,30 +55,6 @@
                                 stringLength: {
                                     max: 160,
                                     message: descriptionLabel + maxValidate
-                                }
-                            }
-                        },
-                        meta_title: {
-                            validators: {
-                                stringLength: {
-                                    max: 60,
-                                    message: metaTitleLabel + ' không được vượt quá 60 ký tự.'
-                                }
-                            }
-                        },
-                        meta_keyword: {
-                            validators: {
-                                stringLength: {
-                                    max: 60,
-                                    message: metaKeywordLabel + ' không được vượt quá 60 ký tự.'
-                                }
-                            }
-                        },
-                        meta_description: {
-                            validators: {
-                                stringLength: {
-                                    max: 160,
-                                    message: metaDescriptionLabel + maxValidate
                                 }
                             }
                         }
@@ -102,12 +75,12 @@
 @endsection
 
 @section('content')
-    <h4 class="fw-semibold mb-4 text-uppercase">{{ isset($row) ? __('trans.category.update') . ': ' . $row->name : __('trans.category.create')  }}</h4>
+    <h4 class="fw-semibold mb-4 text-uppercase">{{ isset($row) ? __('trans.brand.update') . ': ' . $row->name : __('trans.brand.create')  }}</h4>
 
-    {{ html()->form('POST', $router)->id('category-form')->acceptsFiles()->open() }}
+    {{ html()->form('POST', $router)->id('brand-form')->acceptsFiles()->open() }}
     <div class="row g-4">
         <div class="col-12">
-            <a href="{{ route('admin.category.index') }}" class="btn btn-secondary text-capitalize">
+            <a href="{{ route('admin.brand.index') }}" class="btn btn-secondary text-capitalize">
                 <span class="ti-xs ti ti-arrow-bar-to-left me-1"></span>
                 {{ __('trans.btn.back') }}
             </a>
@@ -121,13 +94,13 @@
 
                 <div class="card-body row g-3">
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.category.title'), 'name')->class('text-capitalize') }}
+                        {{ html()->label(__('trans.brand.title'), 'name')->class('text-capitalize') }}
                         {{ html()->text('name')->value($row?->name ?? '')->class('form-control')  }}
                     </div>
 
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.category.name'), 'parent_id')->class('text-capitalize') }}
-                        {{ html()->select('parent_id', $getCategoryList)->value($row?->parent_id ?? '')->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
+                        {{ html()->label(__('trans.category.name'), 'category_id')->class('text-capitalize') }}
+                        {{ html()->select('category_id', $getCategoryList)->value($row?->category_id ?? '')->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-md-6">
@@ -176,31 +149,6 @@
                             </div>
                         </div>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12">
-            <div class="card">
-                <h5 class="card-header mb-0 text-uppercase">{{ __('trans.meta.seo') }}</h5>
-
-                <hr class="my-0">
-
-                <div class="card-body row g-3">
-                    <div class="col-12">
-                        {{ html()->label(__('trans.meta.title'), 'meta_title')->class('text-capitalize') }}
-                        {{ html()->textarea('meta_title')->value($row?->meta_title ?? '')->class('form-control')  }}
-                    </div>
-
-                    <div class="col-12">
-                        {{ html()->label(__('trans.meta.keyword'), 'meta_keyword')->class('text-capitalize') }}
-                        {{ html()->textarea('meta_keyword')->value($row?->meta_keyword ?? '')->class('form-control')  }}
-                    </div>
-
-                    <div class="col-12">
-                        {{ html()->label(__('trans.meta.description'), 'meta_description')->class('text-capitalize') }}
-                        {{ html()->textarea('meta_description')->value($row?->meta_description ?? '')->class('form-control')  }}
                     </div>
                 </div>
             </div>

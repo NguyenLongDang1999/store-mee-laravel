@@ -5,7 +5,7 @@ function optionStatus(): array
     return [
         '' => __('trans.empty'),
         config('constant.status.active') => __('trans.status.active'),
-        config('constant.status.inactive') => __('trans.status.inactive')
+        config('constant.status.inactive') => __('trans.status.inactive'),
     ];
 }
 
@@ -14,7 +14,7 @@ function optionPopular(): array
     return [
         '' => __('trans.empty'),
         config('constant.popular.active') => __('trans.popular.active'),
-        config('constant.popular.inactive') => __('trans.popular.inactive')
+        config('constant.popular.inactive') => __('trans.popular.inactive'),
     ];
 }
 
@@ -25,9 +25,9 @@ function uploadFile($path, $request): bool|string
 
 function getFile($path): ?string
 {
-    if (!is_null($path)) {
+    if (! is_null($path)) {
         return Storage::disk('bunnycdn')->url($path);
     }
 
-    return NULL;
+    return asset('assets/img/default.webp');
 }
