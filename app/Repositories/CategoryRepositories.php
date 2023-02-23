@@ -17,29 +17,29 @@ class CategoryRepositories implements CategoryInterface
     {
         $query = Category::leftJoin('category as parent', 'parent.id', '=', 'category.parent_id');
 
-        if (isset($input['search']['name']) && $input['search']['name'] != '') {
-            $query->where('category.name', 'LIKE', '%'.trim($input['search']['name'].'%'));
+        if (isset($data['search']['name']) && $data['search']['name'] != '') {
+            $query->where('category.name', 'LIKE', '%'.trim($data['search']['name'].'%'));
         }
 
-        if (isset($input['search']['parent_id']) && $input['search']['parent_id'] != '') {
-            $query->where('category.parent_id', $input['search']['parent_id']);
+        if (isset($data['search']['parent_id']) && $data['search']['parent_id'] != '') {
+            $query->where('category.parent_id', $data['search']['parent_id']);
         }
 
-        if (isset($input['search']['status']) && $input['search']['status'] != '') {
-            $query->where('category.status', $input['search']['status']);
+        if (isset($data['search']['status']) && $data['search']['status'] != '') {
+            $query->where('category.status', $data['search']['status']);
         }
 
-        if (isset($input['search']['popular']) && $input['search']['popular'] != '') {
-            $query->where('category.popular', $input['search']['popular']);
+        if (isset($data['search']['popular']) && $data['search']['popular'] != '') {
+            $query->where('category.popular', $data['search']['popular']);
         }
 
-        if (isset($input['search']['onlyTrashed'])) {
+        if (isset($data['search']['onlyTrashed'])) {
             $query->onlyTrashed();
         }
 
         $result['total'] = $query->count();
 
-        if (isset($input['iSortCol_0'])) {
+        if (isset($data['iSortCol_0'])) {
             $sorting_mapping_array = [
                 '1' => 'category.name',
                 '2' => 'parent.name',
@@ -50,12 +50,12 @@ class CategoryRepositories implements CategoryInterface
             ];
 
             $order = 'desc';
-            if (isset($input['sSortDir_0'])) {
-                $order = $input['sSortDir_0'];
+            if (isset($data['sSortDir_0'])) {
+                $order = $data['sSortDir_0'];
             }
 
-            if (isset($sorting_mapping_array[$input['iSortCol_0']])) {
-                $query->orderBy($sorting_mapping_array[$input['iSortCol_0']], $order);
+            if (isset($sorting_mapping_array[$data['iSortCol_0']])) {
+                $query->orderBy($sorting_mapping_array[$data['iSortCol_0']], $order);
             }
         }
 
