@@ -13,6 +13,7 @@ class BrandController extends Controller
     protected string $path;
 
     protected Brand $brand;
+
     protected Category $category;
 
     public function __construct(Brand $brand, Category $category)
@@ -25,6 +26,7 @@ class BrandController extends Controller
     public function index()
     {
         $data['getCategoryList'] = $this->getCategoryList();
+
         return view('backend.brand.index', $data);
     }
 

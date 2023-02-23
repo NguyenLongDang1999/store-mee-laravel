@@ -1,6 +1,6 @@
 @extends('layouts.backend.index')
 
-@section('title', isset($row) ? __('trans.brand.update') . ': ' . $row->name : __('trans.brand.create'))
+@section('title', isset($row) ? __('trans.slider.update') . ': ' . $row->name : __('trans.slider.create'))
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
@@ -16,14 +16,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             (function () {
-                const brandForm = document.getElementById('brand-form'),
+                const sliderForm = document.getElementById('slider-form'),
                     meteCSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     nameLabel = document.querySelector('label[for=name]')?.textContent,
+                    urlLabel = document.querySelector('label[for=url]')?.textContent,
                     descriptionLabel = document.querySelector('label[for=description]')?.textContent,
                     requiredValidate = ' không được bỏ trống.',
                     maxValidate = ' không được vượt quá 160 ký tự.'
 
-                FormValidation.formValidation(brandForm, {
+                FormValidation.formValidation(sliderForm, {
                     fields: {
                         name: {
                             validators: {
@@ -33,20 +34,27 @@
                                 stringLength: {
                                     max: 50,
                                     message: nameLabel + ' phải có độ dài tối đa 50 ký tự.'
+                                }
+                            }
+                        },
+                        url: {
+                            validators: {
+                                notEmpty: {
+                                    message: urlLabel + requiredValidate
                                 },
                                 remote: {
                                     headers: {
                                         "X-CSRF-TOKEN": meteCSRF,
                                     },
-                                    message: nameLabel + ' đã tồn tại. Vui lòng kiểm tra lại!',
+                                    message: urlLabel + ' đã tồn tại. Vui lòng kiểm tra lại!',
                                     method: 'POST',
                                     data: function () {
                                         return {
-                                            name: brandForm.querySelector('[name="name"]').value,
-                                            id: brandForm.querySelector('[name="id"]').value
+                                            url: sliderForm.querySelector('[name="url"]').value,
+                                            id: sliderForm.querySelector('[name="id"]').value
                                         };
                                     },
-                                    url: "{{ route('admin.brand.checkExistData') }}"
+                                    url: "{{ route('admin.slider.checkExistData') }}"
                                 },
                             }
                         },
@@ -75,12 +83,12 @@
 @endsection
 
 @section('content')
-    <h4 class="fw-semibold mb-4 text-uppercase">{{ isset($row) ? __('trans.brand.update') . ': ' . $row->name : __('trans.brand.create')  }}</h4>
+    <h4 class="fw-semibold mb-4 text-uppercase">{{ isset($row) ? __('trans.slider.update') . ': ' . $row->name : __('trans.slider.create')  }}</h4>
 
-    {{ html()->form('POST', $router)->id('brand-form')->acceptsFiles()->open() }}
+    {{ html()->form('POST', $router)->id('slider-form')->acceptsFiles()->open() }}
     <div class="row g-4">
         <div class="col-12">
-            <a href="{{ route('admin.brand.index') }}" class="btn btn-secondary text-capitalize">
+            <a href="{{ route('admin.slider.index') }}" class="btn btn-secondary text-capitalize">
                 <span class="ti-xs ti ti-arrow-bar-to-left me-1"></span>
                 {{ __('trans.btn.back') }}
             </a>
@@ -93,24 +101,19 @@
                 <hr class="my-0">
 
                 <div class="card-body row g-3">
-                    <div class="col-md-6">
-                        {{ html()->label(__('trans.brand.title'), 'name')->class('text-capitalize') }}
+                    <div class="col-12">
+                        {{ html()->label(__('trans.slider.title'), 'name')->class('text-capitalize') }}
                         {{ html()->text('name')->value($row?->name ?? '')->class('form-control')  }}
                     </div>
 
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.category.name'), 'category_id')->class('text-capitalize') }}
-                        {{ html()->select('category_id', $getCategoryList)->value($row?->category_id ?? '')->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
+                        {{ html()->label(__('trans.slug'), 'url')->class('text-capitalize') }}
+                        {{ html()->text('url')->value($row?->url ?? '')->class('form-control')  }}
                     </div>
 
                     <div class="col-md-6">
                         {{ html()->label(__('trans.status.name'), 'name')->class('text-capitalize') }}
                         {{ html()->select('status', optionStatus())->value($row?->status ?? '')->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
-                    </div>
-
-                    <div class="col-md-6">
-                        {{ html()->label(__('trans.popular.name'), 'popular')->class('text-capitalize') }}
-                        {{ html()->select('popular', optionPopular())->value($row?->popular ?? '')->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-12">
@@ -156,7 +159,7 @@
 
         <div class="col-12">
             {{ html()->submit(__('trans.btn.save'))->class('btn btn-primary text-capitalize me-1') }}
-            <a href="{{ route('admin.brand.index') }}" class="btn btn-secondary text-capitalize">
+            <a href="{{ route('admin.slider.index') }}" class="btn btn-secondary text-capitalize">
                 {{ __('trans.btn.back') }}
             </a>
         </div>

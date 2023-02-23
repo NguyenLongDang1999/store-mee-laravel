@@ -1,6 +1,6 @@
 @extends('layouts.backend.index')
 
-@section('title', __('trans.category.manager'))
+@section('title', __('trans.slider.manager'))
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
@@ -25,7 +25,7 @@
                 "bServerSide": true,
                 "bProcessing": true,
                 "sPaginationType": "full_numbers",
-                "sAjaxSource": "{{ route('admin.category.getList') }}",
+                "sAjaxSource": "{{ route('admin.slider.getList') }}",
                 "bDeferRender": true,
                 "bFilter": false,
                 "bDestroy": true,
@@ -41,16 +41,17 @@
                         "bSortable": false
                     },
                     {
-                        data: 'name'
+                        data: 'image_uri',
+                        "bSortable": false
                     },
                     {
-                        data: 'parent_id'
+                        data: 'name'
                     },
                     {
                         data: 'status'
                     },
                     {
-                        data: 'popular'
+                        data: 'start_date'
                     },
                     {
                         data: 'created_at'
@@ -70,16 +71,8 @@
                             "value": $('#frmSearch input[name="search[name]"]').val()
                         });
                         aoData.push({
-                            "name": "search[parent_id]",
-                            "value": $('#frmSearch select[name="search[parent_id]"]').val()
-                        });
-                        aoData.push({
                             "name": "search[status]",
                             "value": $('#frmSearch select[name="search[status]"]').val()
-                        });
-                        aoData.push({
-                            "name": "search[popular]",
-                            "value": $('#frmSearch select[name="search[popular]"]').val()
                         });
                     }
 
@@ -107,51 +100,19 @@
                         responsivePriority: 4,
                         render: function (data, type, full, meta) {
                             let $name = full['name'],
-                                $editPages = full['edit_pages'],
                                 $image = full['image_uri'];
 
-                            return '<div class="d-flex justify-content-start align-items-center user-name">' +
-                                '<div class="avatar-wrapper">' +
-                                '<div class="avatar avatar-sm me-3">' +
-                                '<img src="' + $image + '" class="rounded-circle" alt="' + $name + '"/>' +
-                                '</div>' +
-                                '</div>' +
-                                '<div class="d-flex flex-column">' +
-                                '<a href="' +
-                                $editPages +
-                                '" class="text-body text-truncate text-capitalize"><span class="fw-semibold">' +
-                                $name +
-                                '</span></a>' +
-                                '</div>' +
-                                '</div>';
+                            return '<img src="' + $image + '" class="rounded-circle" alt="' + $name + '"/>';
                         }
                     },
                     {
                         targets: 2,
                         responsivePriority: 4,
                         render: function (data, type, full, meta) {
-                            let $name = full['parentName'],
-                                $editPages = full['edit_pages_parent'],
-                                $image = full['imageUriParent'];
+                            let $name = full['name'],
+                                $editPages = full['edit_pages'];
 
-                            if (!$editPages) {
-                                return ''
-                            }
-
-                            return '<div class="d-flex justify-content-start align-items-center user-name">' +
-                                '<div class="avatar-wrapper">' +
-                                '<div class="avatar avatar-sm me-3">' +
-                                '<img src="' + $image + '" class="rounded-circle" alt="' + $name + '"/>' +
-                                '</div>' +
-                                '</div>' +
-                                '<div class="d-flex flex-column">' +
-                                '<a href="' +
-                                $editPages +
-                                '" class="text-body text-truncate text-capitalize"><span class="fw-semibold">' +
-                                $name +
-                                '</span></a>' +
-                                '</div>' +
-                                '</div>';
+                            return '<a href="' + $editPages + '" class="text-body text-truncate text-capitalize"><span class="fw-semibold">' +  $name + '</span></a>';
                         }
                     },
                     {
@@ -174,30 +135,6 @@
                             return (
                                 '<span class="badge badge-center rounded-pill ' + $status[$status_number].class + ' w-px-30 h-px-30">' +
                                 $status[$status_number].icon +
-                                '</span>'
-                            );
-                        }
-                    },
-                    {
-                        targets: 4,
-                        render: function (data, type, full) {
-                            const $featured_number = full['popular'];
-                            const $featured = {
-                                {{ config('constant.popular.active') }}: {
-                                    icon: '<i class="ti ti-check ti-xs"></i>',
-                                    class: 'bg-label-primary'
-                                },
-                                {{ config('constant.popular.inactive') }}: {
-                                    icon: '<i class="ti ti-x ti-xs"></i>',
-                                    class: ' bg-label-danger'
-                                },
-                            };
-                            if (typeof $featured[$featured_number] === 'undefined') {
-                                return data;
-                            }
-                            return (
-                                '<span class="badge badge-center rounded-pill ' + $featured[$featured_number].class + ' w-px-30 h-px-30">' +
-                                $featured[$featured_number].icon +
                                 '</span>'
                             );
                         }
@@ -298,26 +235,26 @@
 @section('content')
     <h4 class="fw-semibold mb-4 text-uppercase">
         @isset($isRecyclePage)
-            {{ __('trans.category.manager_recycle') }}
+            {{ __('trans.slider.manager_recycle') }}
         @else
-            {{ __('trans.category.manager') }}
+            {{ __('trans.slider.manager') }}
         @endisset
     </h4>
 
     <div class="row g-4">
         <div class="col-12">
             @isset($isRecyclePage)
-                <a href="{{ route('admin.category.index') }}" class="btn btn-secondary text-capitalize">
+                <a href="{{ route('admin.slider.index') }}" class="btn btn-secondary text-capitalize">
                     <span class="ti-xs ti ti-arrow-bar-to-left me-1"></span>
                     {{ __('trans.btn.back') }}
                 </a>
             @else
-                <a href="{{ route('admin.category.create') }}" class="btn btn-primary text-capitalize">
+                <a href="{{ route('admin.slider.create') }}" class="btn btn-primary text-capitalize">
                     <span class="ti-xs ti ti-plus me-1"></span>
                     {{ __('trans.btn.create') }}
                 </a>
 
-                <a href="{{ route('admin.category.recycle') }}" class="btn btn-secondary text-capitalize">
+                <a href="{{ route('admin.slider.recycle') }}" class="btn btn-secondary text-capitalize">
                     <span class="ti-xs ti ti-trash"></span>
                     {{ __('trans.btn.recycle') }}
                 </a>
@@ -329,25 +266,15 @@
                 <h5 class="card-header text-uppercase">{{ __('trans.search') }}</h5>
 
                 <div class="card-body">
-                    {{ html()->form('GET', route('admin.category.getList'))->class('row g-3')->id('frmSearch')->attribute('onsubmit', 'return false')->open() }}
+                    {{ html()->form('GET', route('admin.slider.getList'))->class('row g-3')->id('frmSearch')->attribute('onsubmit', 'return false')->open() }}
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.category.title'), 'search[name]')->class('text-capitalize') }}
+                        {{ html()->label(__('trans.slider.title'), 'search[name]')->class('text-capitalize') }}
                         {{ html()->text('search[name]')->class('form-control')  }}
-                    </div>
-
-                    <div class="col-md-6">
-                        {{ html()->label(__('trans.category.name'), 'search[parent_id]')->class('text-capitalize') }}
-                        {{ html()->select('search[parent_id]', $getCategoryList)->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-md-6">
                         {{ html()->label(__('trans.status.name'), 'search[status]')->class('text-capitalize') }}
                         {{ html()->select('search[status]', optionStatus())->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
-                    </div>
-
-                    <div class="col-md-6">
-                        {{ html()->label(__('trans.popular.name'), 'search[popular]')->class('text-capitalize') }}
-                        {{ html()->select('search[popular]', optionPopular())->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-12 text-center">
@@ -362,18 +289,18 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header border-bottom">
-                    <h5 class="card-title mb-0 text-uppercase">{{ __('trans.category.list') }}</h5>
+                    <h5 class="card-title mb-0 text-uppercase">{{ __('trans.slider.list') }}</h5>
                 </div>
 
                 <div class="card-datatable table-responsive">
-                    <table class="data_table table border-top nowrap">
+                    <table class="data_table table border-top">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>{{ __('trans.info') }}</th>
-                                <th>{{ __('trans.category.parent') }}</th>
+                                <th>{{ __('trans.image.name') }}</th>
+                                <th>{{ __('trans.slider.title') }}</th>
                                 <th>{{ __('trans.status.name') }}</th>
-                                <th>{{ __('trans.popular.name') }}</th>
+                                <th>{{ __('trans.date_range') }}</th>
                                 <th>{{ __('trans.created_at') }}</th>
                                 <th>{{ __('trans.updated_at') }}</th>
                                 <th>{{ __('trans.action') }}</th>

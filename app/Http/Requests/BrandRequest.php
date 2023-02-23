@@ -33,7 +33,7 @@ class BrandRequest extends FormRequest
             'popular' => 'nullable',
             'image_uri' => 'nullable|image|mimes:jpg,jpeg,png,gif',
             'category_id' => 'nullable',
-            'description' => 'max:160'
+            'description' => 'max:160',
         ];
     }
 
@@ -53,7 +53,7 @@ class BrandRequest extends FormRequest
         return [
             'name' => __('trans.brand.title'),
             'image_uri' => __('trans.image.name'),
-            'description' => __('trans.description')
+            'description' => __('trans.description'),
         ];
     }
 

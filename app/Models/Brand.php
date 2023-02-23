@@ -20,7 +20,7 @@ class Brand extends Model
         'description',
         'image_uri',
         'status',
-        'popular'
+        'popular',
     ];
 
     public function getList(array $input = []): array
@@ -43,7 +43,9 @@ class Brand extends Model
             $query->where('brand.popular', $input['search']['popular']);
         }
 
-        if (isset($input['search']['onlyTrashed'])) $query->onlyTrashed();
+        if (isset($input['search']['onlyTrashed'])) {
+            $query->onlyTrashed();
+        }
 
         $result['total'] = $query->count();
 
@@ -103,7 +105,7 @@ class Brand extends Model
             'description',
             'category_id',
             'status',
-            'popular'
+            'popular',
         ]);
     }
 }

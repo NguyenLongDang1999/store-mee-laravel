@@ -5,7 +5,7 @@ return [
         'manager' => 'Quản lý sản phẩm',
     ],
     'dashboard' => [
-        'name' => 'Thống kê'
+        'name' => 'Thống kê',
     ],
     'category' => [
         'manager' => 'Quản lý danh mục',
@@ -25,6 +25,15 @@ return [
         'list' => 'Danh sách thương hiệu',
         'create' => 'Thêm mới thương hiệu',
         'update' => 'Cập nhật thương hiệu',
+    ],
+    'slider' => [
+        'manager' => 'Quản lý Slider',
+        'manager_recycle' => 'Quản lý Slider (Thùng rác)',
+        'name' => 'Slider',
+        'title' => 'Tiêu đề Slider',
+        'list' => 'Danh sách Slider',
+        'create' => 'Thêm mới Slider',
+        'update' => 'Cập nhật Slider',
     ],
     'status' => [
         'name' => 'Trạng thái',
@@ -73,6 +82,7 @@ return [
         'email' => ':attribute không đúng định dạng',
         'string' => ':attribute phải là ký tự chữ.',
     ],
+    'date_range' => 'Ngày áp dụng',
     'slug' => 'Đường dẫn URL',
     'info' => 'Thông tin chung',
     'empty' => '--- Vui lòng chọn ---',

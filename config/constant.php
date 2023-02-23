@@ -16,7 +16,8 @@ return [
     'route' => [
         'dashboard' => 'dashboard',
         'category' => 'category',
-        'brand' => 'brand'
+        'brand' => 'brand',
+        'slider' => 'slider',
     ],
     'bunny' => [
         'cdn_upload' => env('API_BUNNY_UPLOAD_CDN'),

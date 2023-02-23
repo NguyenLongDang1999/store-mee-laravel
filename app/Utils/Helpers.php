@@ -10,33 +10,39 @@ function adminMenu(): array
                     'key' => config('constant.route.dashboard'),
                     'title' => __('trans.dashboard.name'),
                     'icon' => 'ti ti-home',
-                    'href' => route('admin.dashboard.index')
-                ]
-            ]
+                    'href' => route('admin.dashboard.index'),
+                ],
+            ],
         ],
         'manage-product' => [
             'title' => __('trans.product.manager'),
             'content' => [
                 [
+                    'key' => config('constant.route.slider'),
+                    'title' => __('trans.slider.name'),
+                    'icon' => 'ti ti-home',
+                    'href' => route('admin.slider.index'),
+                ],
+                [
                     'key' => config('constant.route.category'),
                     'title' => __('trans.category.name'),
                     'icon' => 'ti ti-category',
-                    'href' => route('admin.category.index')
+                    'href' => route('admin.category.index'),
                 ],
                 [
                     'key' => config('constant.route.brand'),
                     'title' => __('trans.brand.name'),
                     'icon' => 'ti ti-trademark',
-                    'href' => route('admin.brand.index')
-                ]
-            ]
-        ]
+                    'href' => route('admin.brand.index'),
+                ],
+            ],
+        ],
     ];
 }
 
 function activeMenu(string $key): string
 {
-    if (request()->routeIs('admin.' . $key . '.*')) {
+    if (request()->routeIs('admin.'.$key.'.*')) {
         return 'active';
     }
 
