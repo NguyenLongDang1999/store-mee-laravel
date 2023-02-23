@@ -4,86 +4,98 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BrandRequest;
-use App\Models\Brand;
-use App\Models\Category;
+use App\Interfaces\BrandInterface;
+use App\Interfaces\CategoryInterface;
+use Exception;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
-    protected string $path;
+    private string $path;
 
-    protected Brand $brand;
+    private string $error;
 
-    protected Category $category;
+    private string $success;
 
-    public function __construct(Brand $brand, Category $category)
-    {
+    public function __construct(
+        private readonly CategoryInterface $categoryInterface,
+        private readonly BrandInterface $brandInterface
+    ) {
+        $this->success = config('constant.message.success');
+        $this->error = config('constant.message.error');
         $this->path = config('constant.route.brand');
-        $this->brand = $brand;
-        $this->category = $category;
     }
 
-    public function index()
+    public function index(): View
     {
-        $data['getCategoryList'] = $this->getCategoryList();
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
-        return view('backend.brand.index', $data);
+        return view('backend.brand.index', compact('getCategoryList'));
     }
 
-    public function recycle()
+    public function recycle(): View
     {
-        $data['isRecyclePage'] = true;
-        $data['getCategoryList'] = $this->getCategoryList();
+        $isRecyclePage = true;
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
-        return view('backend.brand.index', $data);
+        return view('backend.brand.index', compact('getCategoryList', 'isRecyclePage'));
     }
 
-    public function create()
+    public function create(): View
     {
-        $data['router'] = route('admin.brand.store');
-        $data['getCategoryList'] = $this->getCategoryList();
+        $router = route('admin.brand.store');
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
-        return view('backend.brand.create_edit', $data);
+        return view('backend.brand.create_edit', compact('router', 'getCategoryList'));
     }
 
-    public function store(BrandRequest $request)
+    public function store(BrandRequest $request): RedirectResponse
     {
-        $input = $request->validated();
-        $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
+        try {
+            $input = $request->validated();
+            $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
 
-        if ($this->brand->fill($input)->save()) {
-            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+            $this->brandInterface->create($input);
+
+            return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
+        } catch (Exception $e) {
+            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
         }
-
-        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
-    public function edit($id)
+    public function edit(int $id): View
     {
-        $data['router'] = route('admin.brand.update', $id);
-        $data['row'] = $this->brand->getBrandDetail($id);
-        $data['getCategoryList'] = $this->getCategoryList();
+        $row = $this->brandInterface->find($id);
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
+        $router = route('admin.brand.update', $id);
 
-        return view('backend.brand.create_edit', $data);
+        return view('backend.brand.create_edit', compact('row', 'router', 'getCategoryList'));
     }
 
-    public function update(BrandRequest $request, int $id)
+    public function update(BrandRequest $request, int $id): RedirectResponse
     {
-        $input = $request->validated();
-        $brand = $this->brand->getBrandFind($id);
-        $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
+        try {
+            $input = $request->validated();
 
-        if ($brand->fill($input)->save()) {
-            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+            if ($request->hasFile('image_uri')) {
+                $input['image_uri'] = uploadFile($this->path, $input['image_uri']);
+            }
+
+            $this->brandInterface->update($input, $id);
+
+            return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
+        } catch (Exception $e) {
+            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
         }
-
-        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
-    public function getList(Request $request)
+    public function getList(Request $request): JsonResponse
     {
         $input = $request->input();
-        $results = $this->brand->getList($input);
+        $results = $this->brandInterface->getList($input);
 
         $data = [];
         $data['iTotalRecords'] = $data['iTotalDisplayRecords'] = $results['total'];
@@ -94,15 +106,15 @@ class BrandController extends Controller
                 $data['aaData'][] = [
                     'id' => $item->id,
                     'image_uri' => getFile($item->image_uri),
-                    'imageUriCategory' => getFile($item->categoryImage),
+                    'imageUriCategory' => getFile($item->category?->image_uri),
                     'name' => e(str()->limit($item->name, 20)),
-                    'categoryName' => e(str()->limit($item->categoryName, 20)) ?? '-',
+                    'categoryName' => e(str()->limit($item->category?->name, 20)) ?? '-',
                     'status' => $item->status,
                     'popular' => $item->popular,
                     'created_at' => $item->created_at->format('d-m-Y'),
                     'updated_at' => $item->updated_at->format('d-m-Y'),
                     'edit_pages' => route('admin.brand.edit', $item->id),
-                    'edit_pages_category' => $item->categoryID ? route('admin.category.edit', $item->categoryID) : '',
+                    'edit_pages_category' => $item->category?->id ? route('admin.category.edit', $item->category?->id) : '',
                     'delete' => route('admin.brand.delete', $item->id),
                     'restore' => route('admin.brand.restore', $item->id),
                 ];
@@ -114,67 +126,42 @@ class BrandController extends Controller
 
     public function delete(int $id)
     {
-        $brand = $this->brand->getBrandFind($id);
+        try {
+            $brand = $this->brandInterface->delete($id);
 
-        if ($brand->delete()) {
-            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+            if ($brand) {
+                return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+            }
+
+            return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
+        } catch (Exception $e) {
+            return to_route('admin.brand.index')->with('failed', $e->getMessage());
         }
-
-        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function restore(int $id)
     {
-        $brand = $this->brand->getBrandFind($id);
+        try {
+            $brand = $this->brandInterface->restore($id);
 
-        if ($brand->restore()) {
-            return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+            if ($brand) {
+                return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+            }
+
+            return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
+        } catch (Exception $e) {
+            return to_route('admin.brand.index')->with('failed', $e->getMessage());
         }
-
-        return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function checkExistData(Request $request)
     {
         $input = $request->only(['name']);
         $input['slug'] = str()->slug($input['name']);
-        $result = $this->brand->checkExistData($input);
-        $isValid = ! ($result > 0);
+        $result = $this->brandInterface->existData($input);
 
         return response()->json([
-            'valid' => var_export($isValid, 1),
+            'valid' => $result,
         ]);
-    }
-
-    private function getCategoryList(): array
-    {
-        $getCategoryList = $this->category->getCategoryRecursive();
-        $option = ['' => __('trans.empty')];
-
-        $dash = '';
-
-        foreach ($getCategoryList as $category) {
-            $option[$category->id] = e($category->name);
-
-            if (count($category->children) > 0) {
-                $option = $this->getCategoryRecursive($category->children, $option, $dash);
-            }
-        }
-
-        return $option;
-    }
-
-    private function getCategoryRecursive($child, $option, $dash)
-    {
-        $dash .= '|--- ';
-        foreach ($child as $category) {
-            $option[$category->id] = $dash.e($category->name);
-
-            if (count($category->children) > 0) {
-                return $this->getCategoryRecursive($category->children, $option, $dash);
-            }
-        }
-
-        return $option;
     }
 }

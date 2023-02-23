@@ -21,8 +21,7 @@ class CategoryController extends Controller
 
     public function __construct(
         private readonly CategoryInterface $categoryInterface
-    )
-    {
+    ) {
         $this->success = config('constant.message.success');
         $this->error = config('constant.message.error');
         $this->path = config('constant.route.category');
@@ -30,7 +29,7 @@ class CategoryController extends Controller
 
     public function index(): View
     {
-        $getCategoryList = $this->getCategoryList();
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
         return view('backend.category.index', compact('getCategoryList'));
     }
@@ -38,7 +37,7 @@ class CategoryController extends Controller
     public function recycle(): View
     {
         $isRecyclePage = true;
-        $getCategoryList = $this->getCategoryList();
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
         return view('backend.category.index', compact('getCategoryList', 'isRecyclePage'));
     }
@@ -46,7 +45,7 @@ class CategoryController extends Controller
     public function create(): View
     {
         $router = route('admin.category.store');
-        $getCategoryList = $this->getCategoryList();
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
         return view('backend.category.create_edit', compact('router', 'getCategoryList'));
     }
@@ -68,7 +67,7 @@ class CategoryController extends Controller
     public function edit(int $id): View
     {
         $row = $this->categoryInterface->find($id);
-        $getCategoryList = $this->getCategoryList();
+        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
         $router = route('admin.category.update', $id);
 
         return view('backend.category.create_edit', compact('row', 'router', 'getCategoryList'));
@@ -105,15 +104,15 @@ class CategoryController extends Controller
                 $data['aaData'][] = [
                     'id' => $item->id,
                     'image_uri' => getFile($item->image_uri),
-                    'imageUriParent' => getFile($item->parentImage),
+                    'imageUriParent' => getFile($item->parent?->image_uri),
                     'name' => e(str()->limit($item->name, 20)),
-                    'parentName' => e(str()->limit($item->parentName, 20)) ?? '-',
+                    'parentName' => e(str()->limit($item->parent?->name, 20)) ?? '-',
                     'status' => $item->status,
                     'popular' => $item->popular,
                     'created_at' => $item->created_at->format('d-m-Y'),
                     'updated_at' => $item->updated_at->format('d-m-Y'),
                     'edit_pages' => route('admin.category.edit', $item->id),
-                    'edit_pages_parent' => $item->parentID ? route('admin.category.edit', $item->parentID) : '',
+                    'edit_pages_parent' => $item->parent?->id ? route('admin.category.edit', $item->parent?->id) : '',
                     'delete' => route('admin.category.delete', $item->id),
                     'restore' => route('admin.category.restore', $item->id),
                 ];
@@ -162,37 +161,5 @@ class CategoryController extends Controller
         return response()->json([
             'valid' => $result,
         ]);
-    }
-
-    private function getCategoryList(): array
-    {
-        $getCategoryList = $this->categoryInterface->getCategoryRecursive();
-        $option = ['' => __('trans.category.parent')];
-
-        $dash = '';
-
-        foreach ($getCategoryList as $category) {
-            $option[$category->id] = e($category->name);
-
-            if (count($category->children) > 0) {
-                $option = $this->getCategoryRecursive($category->children, $option, $dash);
-            }
-        }
-
-        return $option;
-    }
-
-    private function getCategoryRecursive($child, $option, $dash): mixed
-    {
-        $dash .= '|--- ';
-        foreach ($child as $category) {
-            $option[$category->id] = $dash . e($category->name);
-
-            if (count($category->children) > 0) {
-                return $this->getCategoryRecursive($category->children, $option, $dash);
-            }
-        }
-
-        return $option;
     }
 }

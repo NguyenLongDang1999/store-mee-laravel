@@ -41,16 +41,20 @@
                         "bSortable": false
                     },
                     {
-                        data: 'name'
+                        data: 'name',
+                        "bSortable": false
                     },
                     {
-                        data: 'parent_id'
+                        data: 'parent_id',
+                        "bSortable": false
                     },
                     {
-                        data: 'status'
+                        data: 'status',
+                        "bSortable": false
                     },
                     {
-                        data: 'popular'
+                        data: 'popular',
+                        "bSortable": false
                     },
                     {
                         data: 'created_at'

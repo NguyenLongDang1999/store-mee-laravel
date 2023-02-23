@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface CategoryInterface
+interface BrandInterface
 {
     public function getList(array $data);
 
@@ -15,8 +15,6 @@ interface CategoryInterface
     public function delete(int $id);
 
     public function restore(int $id);
-
-    public function getCategoryRecursive();
 
     public function existData(array $data);
 }

@@ -41,16 +41,20 @@
                         "bSortable": false
                     },
                     {
-                        data: 'name'
+                        data: 'name',
+                        "bSortable": false
                     },
                     {
-                        data: 'category_id'
+                        data: 'category_id',
+                        "bSortable": false
                     },
                     {
-                        data: 'status'
+                        data: 'status',
+                        "bSortable": false
                     },
                     {
-                        data: 'popular'
+                        data: 'popular',
+                        "bSortable": false
                     },
                     {
                         data: 'created_at'
@@ -367,7 +371,7 @@
                 </div>
 
                 <div class="card-datatable table-responsive">
-                    <table class="data_table table border-top">
+                    <table class="data_table table border-top nowrap">
                         <thead>
                             <tr>
                                 <th></th>
