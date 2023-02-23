@@ -21,7 +21,8 @@ class CategoryController extends Controller
 
     public function __construct(
         private readonly CategoryInterface $categoryInterface
-    ) {
+    )
+    {
         $this->success = config('constant.message.success');
         $this->error = config('constant.message.error');
         $this->path = config('constant.route.category');
@@ -77,7 +78,10 @@ class CategoryController extends Controller
     {
         try {
             $input = $request->validated();
-            $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
+
+            if ($request->hasFile('image_uri')) {
+                $input['image_uri'] = uploadFile($this->path, $input['image_uri']);
+            }
 
             $this->categoryInterface->update($input, $id);
 
@@ -182,7 +186,7 @@ class CategoryController extends Controller
     {
         $dash .= '|--- ';
         foreach ($child as $category) {
-            $option[$category->id] = $dash.e($category->name);
+            $option[$category->id] = $dash . e($category->name);
 
             if (count($category->children) > 0) {
                 return $this->getCategoryRecursive($category->children, $option, $dash);
