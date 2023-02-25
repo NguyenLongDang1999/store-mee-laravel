@@ -11,12 +11,22 @@ $(function () {
     let uploadedImage = $('#uploaded-image')
 
     const bootstrapSelect = $('.selectpicker'),
+        flatpickr = $('.flatpickr'),
         imageFileInput = $('.image-file-input'),
         imageFileReset = $('.image-file-reset');
 
     // Plugins
     if (bootstrapSelect.length) {
         bootstrapSelect.selectpicker()
+    }
+
+    if (typeof flatpickr !== undefined) {
+        flatpickr.flatpickr({
+            enableTime: true,
+            altInput: true,
+            altFormat: 'd-m-Y H:i',
+            dateFormat: 'Y-m-d H:i'
+        });
     }
 
     // Methods

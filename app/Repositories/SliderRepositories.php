@@ -2,30 +2,22 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\BrandInterface;
-use App\Models\Brand;
+use App\Interfaces\SliderInterface;
+use App\Models\Slider;
 use Illuminate\Database\Eloquent\Model;
 
-class BrandRepositories implements BrandInterface
+class SliderRepositories implements SliderInterface
 {
     public function getList(array $data): array
     {
-        $query = Brand::with('category');
+        $query = SLider::query();
 
         if (isset($data['search']['name']) && $data['search']['name'] != '') {
             $query->where('name', 'LIKE', '%'.trim($data['search']['name'].'%'));
         }
 
-        if (isset($data['search']['category_id']) && $data['search']['category_id'] != '') {
-            $query->where('category_id', $data['search']['category_id']);
-        }
-
         if (isset($data['search']['status']) && $data['search']['status'] != '') {
             $query->where('status', $data['search']['status']);
-        }
-
-        if (isset($data['search']['popular']) && $data['search']['popular'] != '') {
-            $query->where('popular', $data['search']['popular']);
         }
 
         if (isset($data['search']['onlyTrashed'])) {
@@ -36,8 +28,7 @@ class BrandRepositories implements BrandInterface
 
         if (isset($data['iSortCol_0'])) {
             $sorting_mapping_array = [
-                '5' => 'created_at',
-                '6' => 'updated_at',
+                '6' => 'created_at',
             ];
 
             $order = 'desc';
@@ -57,37 +48,37 @@ class BrandRepositories implements BrandInterface
 
     public function find(int $id): Model
     {
-        return Brand::findOrFail($id);
+        return Slider::findOrFail($id);
     }
 
     public function create(array $data): Model
     {
-        return Brand::create($data);
+        return Slider::create($data);
     }
 
     public function update(array $data, int $id): bool
     {
-        $brand = Brand::findOrFail($id);
+        $slider = Slider::findOrFail($id);
 
-        return $brand?->fill($data)->save();
+        return $slider?->fill($data)->save();
     }
 
     public function delete(int $id): bool
     {
-        $brand = Brand::findOrFail($id);
+        $slider = Slider::findOrFail($id);
 
-        return $brand->delete();
+        return $slider->delete();
     }
 
     public function restore(int $id): bool|int
     {
-        $brand = Brand::findOrFail($id);
+        $slider = Slider::findOrFail($id);
 
-        return $brand->restore();
+        return $slider->restore();
     }
 
     public function existData(array $data): bool
     {
-        return Brand::where('slug', $data['slug'])->exists();
+        return Slider::where('url', $data['url'])->exists();
     }
 }

@@ -4,11 +4,13 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
 @endsection
 
 @section('js')
     <script src="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
@@ -19,6 +21,7 @@
                 const sliderForm = document.getElementById('slider-form'),
                     meteCSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     nameLabel = document.querySelector('label[for=name]')?.textContent,
+                    startDateLabel = document.querySelector('label[for=start_date]')?.textContent,
                     urlLabel = document.querySelector('label[for=url]')?.textContent,
                     descriptionLabel = document.querySelector('label[for=description]')?.textContent,
                     requiredValidate = ' không được bỏ trống.',
@@ -32,8 +35,8 @@
                                     message: nameLabel + requiredValidate
                                 },
                                 stringLength: {
-                                    max: 50,
-                                    message: nameLabel + ' phải có độ dài tối đa 50 ký tự.'
+                                    max: 160,
+                                    message: nameLabel + maxValidate
                                 }
                             }
                         },
@@ -63,6 +66,13 @@
                                 stringLength: {
                                     max: 160,
                                     message: descriptionLabel + maxValidate
+                                }
+                            }
+                        },
+                        start_date: {
+                            validators: {
+                                notEmpty: {
+                                    message: startDateLabel + requiredValidate
                                 }
                             }
                         }
@@ -101,7 +111,7 @@
                 <hr class="my-0">
 
                 <div class="card-body row g-3">
-                    <div class="col-12">
+                    <div class="col-md-6">
                         {{ html()->label(__('trans.slider.title'), 'name')->class('text-capitalize') }}
                         {{ html()->text('name')->value($row?->name ?? '')->class('form-control')  }}
                     </div>
@@ -109,6 +119,20 @@
                     <div class="col-md-6">
                         {{ html()->label(__('trans.slug'), 'url')->class('text-capitalize') }}
                         {{ html()->text('url')->value($row?->url ?? '')->class('form-control')  }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ html()->label(__('trans.start_date'), 'start_date')->class('text-capitalize') }}
+                                {{ html()->text('start_date')->value($row?->start_date ?? '')->placeholder('DD-MM-YYYY')->class('form-control flatpickr')  }}
+                            </div>
+
+                            <div class="col-md-6">
+                                {{ html()->label(__('trans.end_date'), 'end_date')->class('text-capitalize') }}
+                                {{ html()->text('end_date')->value($row?->end_date ?? '')->placeholder('DD-MM-YYYY')->class('form-control flatpickr')  }}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-md-6">
@@ -151,7 +175,6 @@
                                 <p class="mb-0">Chấp nhận ảnh JPG, GIF or PNG.</p>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

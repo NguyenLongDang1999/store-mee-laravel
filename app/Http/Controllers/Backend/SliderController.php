@@ -4,77 +4,92 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SliderRequest;
-use App\Models\Slider;
+use App\Interfaces\SliderInterface;
+use Exception;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class SliderController extends Controller
 {
-    protected string $path;
+    private string $path;
 
-    protected Slider $slider;
+    private string $error;
 
-    public function __construct(Slider $slider)
+    private string $success;
+
+    public function __construct(
+        private readonly SliderInterface $sliderInterface,
+    )
     {
+        $this->success = config('constant.message.success');
+        $this->error = config('constant.message.error');
         $this->path = config('constant.route.slider');
-        $this->slider = $slider;
     }
 
-    public function index()
+    public function index(): View
     {
         return view('backend.slider.index');
     }
 
-    public function recycle()
+    public function recycle(): View
     {
-        $data['isRecyclePage'] = true;
+        $isRecyclePage = true;
 
-        return view('backend.slider.index', $data);
+        return view('backend.slider.index', compact('isRecyclePage'));
     }
 
-    public function create()
+    public function create(): View
     {
-        $data['router'] = route('admin.slider.store');
+        $router = route('admin.slider.store');
 
-        return view('backend.slider.create_edit', $data);
+        return view('backend.slider.create_edit', compact('router'));
     }
 
-    public function store(SliderRequest $request)
+    public function store(SliderRequest $request): RedirectResponse
     {
-        $input = $request->validated();
-        $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
+        try {
+            $input = $request->validated();
+            $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
 
-        if ($this->slider->fill($input)->save()) {
-            return to_route('admin.slider.index')->with(config('constant.message.success'), __('trans.message.success'));
+            $this->sliderInterface->create($input);
+
+            return to_route('admin.slider.index')->with($this->success, __('trans.message.success'));
+        } catch (Exception $e) {
+            return to_route('admin.slider.index')->with($this->error, $e->getMessage());
         }
-
-        return to_route('admin.slider.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
-    public function edit($id)
+    public function edit(int $id): View
     {
-        $data['router'] = route('admin.slider.update', $id);
-        $data['row'] = $this->slider->getSliderDetail($id);
+        $row = $this->sliderInterface->find($id);
+        $router = route('admin.slider.update', $id);
 
-        return view('backend.slider.create_edit', $data);
+        return view('backend.slider.create_edit', compact('row', 'router'));
     }
 
-    public function update(SliderRequest $request, int $id)
+    public function update(SliderRequest $request, int $id): RedirectResponse
     {
-        $input = $request->validated();
-        $slider = $this->slider->getSliderFind($id);
-        $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
+        try {
+            $input = $request->validated();
 
-        if ($slider->fill($input)->save()) {
-            return to_route('admin.slider.index')->with(config('constant.message.success'), __('trans.message.success'));
+            if ($request->hasFile('image_uri')) {
+                $input['image_uri'] = uploadFile($this->path, $input['image_uri']);
+            }
+
+            $this->sliderInterface->update($input, $id);
+
+            return to_route('admin.slider.index')->with($this->success, __('trans.message.success'));
+        } catch (Exception $e) {
+            return to_route('admin.slider.index')->with($this->error, $e->getMessage());
         }
-
-        return to_route('admin.slider.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
-    public function getList(Request $request)
+    public function getList(Request $request): JsonResponse
     {
         $input = $request->input();
-        $results = $this->slider->getList($input);
+        $results = $this->sliderInterface->getList($input);
 
         $data = [];
         $data['iTotalRecords'] = $data['iTotalDisplayRecords'] = $results['total'];
@@ -86,11 +101,10 @@ class SliderController extends Controller
                     'id' => $item->id,
                     'image_uri' => getFile($item->image_uri),
                     'name' => e(str()->limit($item->name, 20)),
-                    'status' => $item->status,
                     'start_date' => $item->start_date,
                     'end_date' => $item->end_date,
+                    'status' => $item->status,
                     'created_at' => $item->created_at->format('d-m-Y'),
-                    'updated_at' => $item->updated_at->format('d-m-Y'),
                     'edit_pages' => route('admin.slider.edit', $item->id),
                     'delete' => route('admin.slider.delete', $item->id),
                     'restore' => route('admin.slider.restore', $item->id),
@@ -103,34 +117,41 @@ class SliderController extends Controller
 
     public function delete(int $id)
     {
-        $slider = $this->slider->getSliderFind($id);
+        try {
+            $brand = $this->sliderInterface->delete($id);
 
-        if ($slider->delete()) {
-            return to_route('admin.slider.index')->with(config('constant.message.success'), __('trans.message.success'));
+            if ($brand) {
+                return to_route('admin.slider.index')->with($this->success, __('trans.message.success'));
+            }
+
+            return to_route('admin.slider.index')->with($this->error, __('trans.message.error'));
+        } catch (Exception $e) {
+            return to_route('admin.slider.index')->with($this->error, $e->getMessage());
         }
-
-        return to_route('admin.slider.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function restore(int $id)
     {
-        $slider = $this->slider->getSliderFind($id);
+        try {
+            $brand = $this->sliderInterface->restore($id);
 
-        if ($slider->restore()) {
-            return to_route('admin.slider.index')->with(config('constant.message.success'), __('trans.message.success'));
+            if ($brand) {
+                return to_route('admin.slider.index')->with($this->success, __('trans.message.success'));
+            }
+
+            return to_route('admin.slider.index')->with($this->error, __('trans.message.error'));
+        } catch (Exception $e) {
+            return to_route('admin.slider.index')->with($this->error, $e->getMessage());
         }
-
-        return to_route('admin.slider.index')->with(config('constant.message.error'), __('trans.message.error'));
     }
 
     public function checkExistData(Request $request)
     {
         $input = $request->only(['url']);
-        $result = $this->slider->checkExistData($input);
-        $isValid = ! ($result > 0);
+        $result = $this->sliderInterface->existData($input);
 
         return response()->json([
-            'valid' => var_export($isValid, 1),
+            'valid' => $result,
         ]);
     }
 }

@@ -33,7 +33,7 @@
                 "iDisplayLength": 20,
                 "bSort": true,
                 "aaSorting": [
-                    [5, "desc"]
+                    [6, "desc"]
                 ],
                 columns: [
                     {
@@ -45,19 +45,23 @@
                         "bSortable": false
                     },
                     {
-                        data: 'name'
+                        data: 'name',
+                        "bSortable": false
                     },
                     {
-                        data: 'status'
+                        data: 'status',
+                        "bSortable": false
                     },
                     {
-                        data: 'start_date'
+                        data: 'start_date',
+                        "bSortable": false
+                    },
+                    {
+                        data: 'end_date',
+                        "bSortable": false
                     },
                     {
                         data: 'created_at'
-                    },
-                    {
-                        data: 'updated_at'
                     },
                     {
                         data: 'action',
@@ -102,7 +106,7 @@
                             let $name = full['name'],
                                 $image = full['image_uri'];
 
-                            return '<img src="' + $image + '" class="rounded-circle" alt="' + $name + '"/>';
+                            return '<img src="' + $image + '" class="w-px-150" alt="' + $name + '"/>';
                         }
                     },
                     {
@@ -300,9 +304,9 @@
                                 <th>{{ __('trans.image.name') }}</th>
                                 <th>{{ __('trans.slider.title') }}</th>
                                 <th>{{ __('trans.status.name') }}</th>
-                                <th>{{ __('trans.date_range') }}</th>
+                                <th>{{ __('trans.start_date') }}</th>
+                                <th>{{ __('trans.end_date') }}</th>
                                 <th>{{ __('trans.created_at') }}</th>
-                                <th>{{ __('trans.updated_at') }}</th>
                                 <th>{{ __('trans.action') }}</th>
                             </tr>
                         </thead>

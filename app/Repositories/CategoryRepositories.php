@@ -36,8 +36,8 @@ class CategoryRepositories implements CategoryInterface
 
         if (isset($data['iSortCol_0'])) {
             $sorting_mapping_array = [
-                '5' => 'category.created_at',
-                '6' => 'category.updated_at',
+                '5' => 'created_at',
+                '6' => 'updated_at',
             ];
 
             $order = 'desc';

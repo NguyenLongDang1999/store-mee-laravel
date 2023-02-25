@@ -83,6 +83,8 @@ return [
         'string' => ':attribute phải là ký tự chữ.',
     ],
     'date_range' => 'Ngày áp dụng',
+    'start_date' => 'Ngày áp dụng (Bắt đầu)',
+    'end_date' => 'Ngày áp dụng (Kết thúc)',
     'slug' => 'Đường dẫn URL',
     'info' => 'Thông tin chung',
     'empty' => '--- Vui lòng chọn ---',

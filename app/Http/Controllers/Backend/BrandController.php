@@ -130,12 +130,12 @@ class BrandController extends Controller
             $brand = $this->brandInterface->delete($id);
 
             if ($brand) {
-                return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+                return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
             }
 
-            return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
+            return to_route('admin.brand.index')->with($this->error, __('trans.message.error'));
         } catch (Exception $e) {
-            return to_route('admin.brand.index')->with('failed', $e->getMessage());
+            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
         }
     }
 
@@ -145,12 +145,12 @@ class BrandController extends Controller
             $brand = $this->brandInterface->restore($id);
 
             if ($brand) {
-                return to_route('admin.brand.index')->with(config('constant.message.success'), __('trans.message.success'));
+                return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
             }
 
-            return to_route('admin.brand.index')->with(config('constant.message.error'), __('trans.message.error'));
+            return to_route('admin.brand.index')->with($this->error, __('trans.message.error'));
         } catch (Exception $e) {
-            return to_route('admin.brand.index')->with('failed', $e->getMessage());
+            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
         }
     }
 

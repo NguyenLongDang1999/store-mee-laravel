@@ -21,7 +21,8 @@ class CategoryController extends Controller
 
     public function __construct(
         private readonly CategoryInterface $categoryInterface
-    ) {
+    )
+    {
         $this->success = config('constant.message.success');
         $this->error = config('constant.message.error');
         $this->path = config('constant.route.category');
@@ -128,12 +129,12 @@ class CategoryController extends Controller
             $category = $this->categoryInterface->delete($id);
 
             if ($category) {
-                return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+                return to_route('admin.category.index')->with($this->success, __('trans.message.success'));
             }
 
-            return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
+            return to_route('admin.category.index')->with($this->error, __('trans.message.error'));
         } catch (Exception $e) {
-            return to_route('admin.category.index')->with('failed', $e->getMessage());
+            return to_route('admin.category.index')->with($this->error, $e->getMessage());
         }
     }
 
@@ -143,23 +144,23 @@ class CategoryController extends Controller
             $category = $this->categoryInterface->restore($id);
 
             if ($category) {
-                return to_route('admin.category.index')->with(config('constant.message.success'), __('trans.message.success'));
+                return to_route('admin.category.index')->with($this->success, __('trans.message.success'));
             }
 
-            return to_route('admin.category.index')->with(config('constant.message.error'), __('trans.message.error'));
+            return to_route('admin.category.index')->with($this->error, __('trans.message.error'));
         } catch (Exception $e) {
-            return to_route('admin.category.index')->with('failed', $e->getMessage());
+            return to_route('admin.category.index')->with($this->error, $e->getMessage());
         }
     }
 
-    public function checkExistData(Request $request): JsonResponse
+    public function checkExistData(Request $request)
     {
         $input = $request->only(['name']);
         $input['slug'] = str()->slug($input['name']);
         $result = $this->categoryInterface->existData($input);
 
         return response()->json([
-            'valid' => $result,
+            'valid' => var_export($result, 1),
         ]);
     }
 }
