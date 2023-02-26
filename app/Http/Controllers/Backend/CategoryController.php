@@ -123,44 +123,68 @@ class CategoryController extends Controller
         return response()->json($data);
     }
 
-    public function delete(int $id): RedirectResponse
+    public function delete(int $id): JsonResponse
     {
         try {
             $category = $this->categoryInterface->delete($id);
 
             if ($category) {
-                return to_route('admin.category.index')->with($this->success, __('trans.message.success'));
+                return response()->json([
+                    'result' => true,
+                    'title' => __('trans.message.title.success'),
+                    'message' => __('trans.message.success')
+                ]);
             }
 
-            return to_route('admin.category.index')->with($this->error, __('trans.message.error'));
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => __('trans.message.error')
+            ]);
         } catch (Exception $e) {
-            return to_route('admin.category.index')->with($this->error, $e->getMessage());
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
-    public function restore(int $id): RedirectResponse
+    public function restore(int $id): JsonResponse
     {
         try {
             $category = $this->categoryInterface->restore($id);
 
             if ($category) {
-                return to_route('admin.category.index')->with($this->success, __('trans.message.success'));
+                return response()->json([
+                    'result' => true,
+                    'title' => __('trans.message.title.success'),
+                    'message' => __('trans.message.success')
+                ]);
             }
 
-            return to_route('admin.category.index')->with($this->error, __('trans.message.error'));
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => __('trans.message.error')
+            ]);
         } catch (Exception $e) {
-            return to_route('admin.category.index')->with($this->error, $e->getMessage());
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
-    public function checkExistData(Request $request)
+    public function checkExistData(Request $request): JsonResponse
     {
-        $input = $request->only(['name']);
+        $input = $request->only(['id', 'name']);
         $input['slug'] = str()->slug($input['name']);
         $result = $this->categoryInterface->existData($input);
 
         return response()->json([
-            'valid' => var_export($result, 1),
+            'valid' => !$result
         ]);
     }
 }

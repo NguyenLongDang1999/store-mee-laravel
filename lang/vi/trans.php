@@ -60,13 +60,26 @@ return [
         'update' => 'Cập nhật',
         'back' => 'Quay lại',
         'save' => 'Lưu lại',
+        'cancel' => 'Hủy bỏ',
+        'confirm' => 'Xác nhận'
     ],
     'image' => [
         'name' => 'Hình đại diện',
     ],
     'message' => [
+        'title' => [
+            'success' => 'Thành công',
+            'error' => 'Thất bại',
+        ],
         'success' => 'Dữ liệu đã được lưu thành công!',
         'error' => 'Thao tác thất bại! Vui lòng kiểm tra lại.',
+    ],
+    'confirm' => [
+        'title' => [
+            'delete' => 'Xác nhận xóa'
+        ],
+        'update' => 'Bạn có chắc chắn muốn cập nhật dữ liệu này không?',
+        'delete' => 'Bạn có chắc chắn muốn xóa dữ liệu này không?'
     ],
     'validation' => [
         'required' => ':attribute không được bỏ trống.',

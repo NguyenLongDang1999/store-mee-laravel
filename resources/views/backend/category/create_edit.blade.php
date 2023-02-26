@@ -105,6 +105,8 @@
     <h4 class="fw-semibold mb-4 text-uppercase">{{ isset($row) ? __('trans.category.update') . ': ' . $row->name : __('trans.category.create')  }}</h4>
 
     {{ html()->form('POST', $router)->id('category-form')->acceptsFiles()->open() }}
+    {{ html()->hidden('id', $row?->id ?? '') }}
+
     <div class="row g-4">
         <div class="col-12">
             <a href="{{ route('admin.category.index') }}" class="btn btn-secondary text-capitalize">

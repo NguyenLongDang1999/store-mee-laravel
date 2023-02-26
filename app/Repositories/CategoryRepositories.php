@@ -5,32 +5,28 @@ namespace App\Repositories;
 use App\Interfaces\CategoryInterface;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class CategoryRepositories implements CategoryInterface
 {
     public function getList(array $data): array
     {
-        $query = Category::with('parent');
-
-        if (isset($data['search']['name']) && $data['search']['name'] != '') {
-            $query->where('name', 'LIKE', '%'.trim($data['search']['name'].'%'));
-        }
-
-        if (isset($data['search']['parent_id']) && $data['search']['parent_id'] != '') {
-            $query->where('parent_id', $data['search']['parent_id']);
-        }
-
-        if (isset($data['search']['status']) && $data['search']['status'] != '') {
-            $query->where('status', $data['search']['status']);
-        }
-
-        if (isset($data['search']['popular']) && $data['search']['popular'] != '') {
-            $query->where('popular', $data['search']['popular']);
-        }
-
-        if (isset($data['search']['onlyTrashed'])) {
-            $query->onlyTrashed();
-        }
+        $query = Category::with('parent')
+            ->when(isset($data['name']), function (Builder $query) use ($data) {
+                $query->where('name', 'LIKE', '%' . trim($data['name'] . '%'));
+            })
+            ->when(isset($data['parent_id']), function (Builder $query) use ($data) {
+                $query->where('parent_id', $data['parent_id']);
+            })
+            ->when(isset($data['status']), function (Builder $query) use ($data) {
+                $query->where('status', $data['status']);
+            })
+            ->when(isset($data['popular']), function (Builder $query) use ($data) {
+                $query->where('popular', $data['popular']);
+            })
+            ->when($data['onlyTrashed'], function (Builder $query) {
+                $query->onlyTrashed();
+            });
 
         $result['total'] = $query->count();
 
@@ -81,7 +77,7 @@ class CategoryRepositories implements CategoryInterface
 
     public function restore(int $id): bool|int
     {
-        $category = Category::findOrFail($id);
+        $category = Category::onlyTrashed()->findOrFail($id);
 
         return $category->restore();
     }
@@ -108,7 +104,7 @@ class CategoryRepositories implements CategoryInterface
     {
         $dash .= '|--- ';
         foreach ($child as $category) {
-            $option[$category->id] = $dash.e($category->name);
+            $option[$category->id] = $dash . e($category->name);
 
             if (count($category->children) > 0) {
                 return $this->categoryRecursive($category->children, $option, $dash);
@@ -120,6 +116,10 @@ class CategoryRepositories implements CategoryInterface
 
     public function existData(array $data): bool
     {
-        return Category::where('slug', $data['slug'])->exists();
+        return Category::where('slug', $data['slug'])
+            ->when($data['id'], function (Builder $query) use ($data) {
+                $query->where('id', '!=', $data['id']);
+            })
+            ->exists();
     }
 }

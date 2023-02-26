@@ -78,6 +78,8 @@
     <h4 class="fw-semibold mb-4 text-uppercase">{{ isset($row) ? __('trans.brand.update') . ': ' . $row->name : __('trans.brand.create')  }}</h4>
 
     {{ html()->form('POST', $router)->id('brand-form')->acceptsFiles()->open() }}
+    {{ html()->hidden('id', $row?->id ?? '') }}
+    
     <div class="row g-4">
         <div class="col-12">
             <a href="{{ route('admin.brand.index') }}" class="btn btn-secondary text-capitalize">

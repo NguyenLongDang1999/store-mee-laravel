@@ -5,22 +5,27 @@ $(function () {
             async: true,
             cache: false,
         }
-    });
+    })
 
     // Variables
-    let uploadedImage = $('#uploaded-image')
+    let uploadedImage = $('#uploaded-image'),
+        toastPlacement,
+        dataID, action
 
     const bootstrapSelect = $('.selectpicker'),
         flatpickr = $('.flatpickr'),
         imageFileInput = $('.image-file-input'),
-        imageFileReset = $('.image-file-reset');
+        imageFileReset = $('.image-file-reset'),
+        toastPlacementExample = $('.toast-placement-ex'),
+        actionDialog = $('#action-dialog'),
+        btnAction = $('#btn-action')
 
     // Plugins
     if (bootstrapSelect.length) {
         bootstrapSelect.selectpicker()
     }
 
-    if (typeof flatpickr !== undefined) {
+    if (flatpickr.length) {
         flatpickr.flatpickr({
             enableTime: true,
             altInput: true,
@@ -44,6 +49,46 @@ $(function () {
         imageFileReset.click(function () {
             imageFileInput.val('')
             uploadedImage.attr('src', resetImage)
+        })
+    }
+
+    actionDialog.on('show.bs.modal', function (event) {
+        dataID = $(event.relatedTarget).data('id')
+        action = $(event.relatedTarget).data('action')
+    })
+
+    $(btnAction).on('click', function (e) {
+        e.preventDefault()
+        actionDataWithDialog(dataID, action)
+    })
+
+    // Functions
+    function actionDataWithDialog(dataID, action) {
+        $.ajax({
+            type: "post",
+            url: action,
+            data: {
+                data: dataID
+            }
+        }).done(function (resp) {
+            const toastResult = $('.toast-body'),
+                toastType = $('.toast-type'),
+                toastTitle = $('.toast-title')
+
+            if (resp.result) {
+                toastType.addClass('bg-primary')
+                toastType.removeClass('bg-danger')
+            } else {
+                toastType.addClass('bg-danger')
+                toastType.removeClass('bg-primary')
+            }
+
+            result.draw()
+            actionDialog.modal('hide')
+            toastTitle.text(resp.title)
+            toastResult.text(resp.message)
+            toastPlacement = new bootstrap.Toast(toastPlacementExample);
+            toastPlacement.show();
         })
     }
 })

@@ -124,44 +124,68 @@ class BrandController extends Controller
         return response()->json($data);
     }
 
-    public function delete(int $id)
+    public function delete(int $id): JsonResponse
     {
         try {
-            $brand = $this->brandInterface->delete($id);
+            $category = $this->brandInterface->delete($id);
 
-            if ($brand) {
-                return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
+            if ($category) {
+                return response()->json([
+                    'result' => true,
+                    'title' => __('trans.message.title.success'),
+                    'message' => __('trans.message.success')
+                ]);
             }
 
-            return to_route('admin.brand.index')->with($this->error, __('trans.message.error'));
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => __('trans.message.error')
+            ]);
         } catch (Exception $e) {
-            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
-    public function restore(int $id)
+    public function restore(int $id): JsonResponse
     {
         try {
-            $brand = $this->brandInterface->restore($id);
+            $category = $this->brandInterface->restore($id);
 
-            if ($brand) {
-                return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
+            if ($category) {
+                return response()->json([
+                    'result' => true,
+                    'title' => __('trans.message.title.success'),
+                    'message' => __('trans.message.success')
+                ]);
             }
 
-            return to_route('admin.brand.index')->with($this->error, __('trans.message.error'));
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => __('trans.message.error')
+            ]);
         } catch (Exception $e) {
-            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
-    public function checkExistData(Request $request)
+    public function checkExistData(Request $request): JsonResponse
     {
-        $input = $request->only(['name']);
+        $input = $request->only(['id', 'name']);
         $input['slug'] = str()->slug($input['name']);
         $result = $this->brandInterface->existData($input);
 
         return response()->json([
-            'valid' => $result,
+            'valid' => !$result,
         ]);
     }
 }

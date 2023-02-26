@@ -70,29 +70,26 @@
                 "fnServerParams": function (aoData) {
                     if (click_mode === 0) {
                         aoData.push({
-                            "name": "search[name]",
-                            "value": $('#frmSearch input[name="search[name]"]').val()
+                            "name": "name",
+                            "value": $('#frmSearch input[name="name"]').val()
                         });
                         aoData.push({
-                            "name": "search[category_id]",
-                            "value": $('#frmSearch select[name="search[category_id]"]').val()
+                            "name": "category_id",
+                            "value": $('#frmSearch select[name="category_id"]').val()
                         });
                         aoData.push({
-                            "name": "search[status]",
-                            "value": $('#frmSearch select[name="search[status]"]').val()
+                            "name": "status",
+                            "value": $('#frmSearch select[name="status"]').val()
                         });
                         aoData.push({
-                            "name": "search[popular]",
-                            "value": $('#frmSearch select[name="search[popular]"]').val()
+                            "name": "popular",
+                            "value": $('#frmSearch select[name="popular"]').val()
                         });
                     }
-
-                    @isset($isRecyclePage)
                     aoData.push({
-                        "name": "search[onlyTrashed]",
-                        "value": 1
+                        "name": "onlyTrashed",
+                        "value": "{{ $isRecyclePage ?? '' }}"
                     });
-                    @endisset
                 },
                 columnDefs: [
                     {
@@ -211,27 +208,25 @@
                         targets: -1,
                         title: 'Thao Tác',
                         render: function (data, type, full) {
+                            const $id = full['id'];
+
                             @isset($isRecyclePage)
                             const $restore = full['restore'];
 
                             return (
-                                '<div class="d-flex">' +
-                                '<form action=' + $restore + ' method="POST">@csrf ' +
-                                '<button type="submit" class="btn btn-sm btn-icon"><i class="ti ti-refresh"></i></button>' +
-                                '</form>' +
-                                '</div>'
+                                '<a href="javascript:void(0)" class="btn btn-sm btn-icon item-edit" data-bs-toggle="modal" data-bs-target="#action-dialog" data-id=' + $id + ' data-action=' + $restore + '>' +
+                                '<i class="ti ti-refresh"></i>' +
+                                '</a>'
                             );
                             @else
                             const $editPages = full['edit_pages'],
-                                $delete = full['delete'];
+                                $delete = full['delete']
 
                             return (
-                                '<div class="d-flex">' +
                                 '<a href=' + $editPages + ' class="btn btn-sm btn-icon item-edit me-2"><i class="ti ti-edit"></i></a>' +
-                                '<form action=' + $delete + ' method="POST">@csrf ' +
-                                '<button type="submit" class="btn btn-sm btn-icon"><i class="ti ti-trash"></i></button>' +
-                                '</form>' +
-                                '</div>'
+                                '<a href="javascript:void(0)" class="btn btn-sm btn-icon item-edit" data-bs-toggle="modal" data-bs-target="#action-dialog" data-id=' + $id + ' data-action=' + $delete + '>' +
+                                '<i class="ti ti-trash"></i>' +
+                                '</a>'
                             );
                             @endisset
                         }
@@ -294,13 +289,15 @@
             $('#btnFrmReset').on('click', function () {
                 click_mode = 1;
                 result.draw();
-                $('.bootstrap-select').selectpicker('val', '');
+                $('.selectpicker').selectpicker('val', '');
             });
         })
     </script>
 @endsection
 
 @section('content')
+    @include('components._action')
+
     <h4 class="fw-semibold mb-4 text-uppercase">
         @isset($isRecyclePage)
             {{ __('trans.brand.manager_recycle') }}
@@ -336,23 +333,23 @@
                 <div class="card-body">
                     {{ html()->form('GET', route('admin.brand.getList'))->class('row g-3')->id('frmSearch')->attribute('onsubmit', 'return false')->open() }}
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.brand.title'), 'search[name]')->class('text-capitalize') }}
-                        {{ html()->text('search[name]')->class('form-control')  }}
+                        {{ html()->label(__('trans.brand.title'), 'name')->class('text-capitalize') }}
+                        {{ html()->text('name')->class('form-control')  }}
                     </div>
 
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.category.name'), 'search[category_id]')->class('text-capitalize') }}
-                        {{ html()->select('search[category_id]', $getCategoryList)->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
+                        {{ html()->label(__('trans.category.name'), 'category_id')->class('text-capitalize') }}
+                        {{ html()->select('category_id', $getCategoryList)->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.status.name'), 'search[status]')->class('text-capitalize') }}
-                        {{ html()->select('search[status]', optionStatus())->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
+                        {{ html()->label(__('trans.status.name'), 'status')->class('text-capitalize') }}
+                        {{ html()->select('status', optionStatus())->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-md-6">
-                        {{ html()->label(__('trans.popular.name'), 'search[popular]')->class('text-capitalize') }}
-                        {{ html()->select('search[popular]', optionPopular())->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
+                        {{ html()->label(__('trans.popular.name'), 'popular')->class('text-capitalize') }}
+                        {{ html()->select('popular', optionPopular())->class('selectpicker text-capitalize w-100')->attribute('data-style', 'btn-default text-capitalize')  }}
                     </div>
 
                     <div class="col-12 text-center">

@@ -5,32 +5,28 @@ namespace App\Repositories;
 use App\Interfaces\BrandInterface;
 use App\Models\Brand;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class BrandRepositories implements BrandInterface
 {
     public function getList(array $data): array
     {
-        $query = Brand::with('category');
-
-        if (isset($data['search']['name']) && $data['search']['name'] != '') {
-            $query->where('name', 'LIKE', '%'.trim($data['search']['name'].'%'));
-        }
-
-        if (isset($data['search']['category_id']) && $data['search']['category_id'] != '') {
-            $query->where('category_id', $data['search']['category_id']);
-        }
-
-        if (isset($data['search']['status']) && $data['search']['status'] != '') {
-            $query->where('status', $data['search']['status']);
-        }
-
-        if (isset($data['search']['popular']) && $data['search']['popular'] != '') {
-            $query->where('popular', $data['search']['popular']);
-        }
-
-        if (isset($data['search']['onlyTrashed'])) {
-            $query->onlyTrashed();
-        }
+        $query = Brand::with('category')
+            ->when(isset($data['name']), function (Builder $query) use ($data) {
+                $query->where('name', 'LIKE', '%' . trim($data['name'] . '%'));
+            })
+            ->when(isset($data['category_id']), function (Builder $query) use ($data) {
+                $query->where('category_id', $data['category_id']);
+            })
+            ->when(isset($data['status']), function (Builder $query) use ($data) {
+                $query->where('status', $data['status']);
+            })
+            ->when(isset($data['popular']), function (Builder $query) use ($data) {
+                $query->where('popular', $data['popular']);
+            })
+            ->when($data['onlyTrashed'], function (Builder $query) {
+                $query->onlyTrashed();
+            });
 
         $result['total'] = $query->count();
 
@@ -81,13 +77,17 @@ class BrandRepositories implements BrandInterface
 
     public function restore(int $id): bool|int
     {
-        $brand = Brand::findOrFail($id);
+        $brand = Brand::onlyTrashed()->findOrFail($id);
 
         return $brand->restore();
     }
 
     public function existData(array $data): bool
     {
-        return Brand::where('slug', $data['slug'])->exists();
+        return Brand::where('slug', $data['slug'])
+            ->when($data['id'], function (Builder $query) use ($data) {
+                $query->where('id', '!=', $data['id']);
+            })
+            ->exists();
     }
 }
