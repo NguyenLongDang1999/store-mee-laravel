@@ -132,7 +132,6 @@
                         responsivePriority: 4,
                         render: function (data, type, full, meta) {
                             let $name = full['categoryName'],
-                                $id = full['categoryID'],
                                 $editPages = full['edit_pages_category'],
                                 $image = full['imageUriCategory'];
 

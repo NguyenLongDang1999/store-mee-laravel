@@ -101,8 +101,8 @@ class SliderController extends Controller
                     'id' => $item->id,
                     'image_uri' => getFile($item->image_uri),
                     'name' => e(str()->limit($item->name, 20)),
-                    'start_date' => $item->start_date,
-                    'end_date' => $item->end_date,
+                    'start_date' => date('d-m-Y H:i', strtotime($item->start_date)),
+                    'end_date' => date('d-m-Y H:i', strtotime($item->end_date)),
                     'status' => $item->status,
                     'created_at' => $item->created_at->format('d-m-Y'),
                     'edit_pages' => route('admin.slider.edit', $item->id),
@@ -115,43 +115,67 @@ class SliderController extends Controller
         return response()->json($data);
     }
 
-    public function delete(int $id)
+    public function delete(int $id): JsonResponse
     {
         try {
-            $brand = $this->sliderInterface->delete($id);
+            $slider = $this->sliderInterface->delete($id);
 
-            if ($brand) {
-                return to_route('admin.slider.index')->with($this->success, __('trans.message.success'));
+            if ($slider) {
+                return response()->json([
+                    'result' => true,
+                    'title' => __('trans.message.title.success'),
+                    'message' => __('trans.message.success')
+                ]);
             }
 
-            return to_route('admin.slider.index')->with($this->error, __('trans.message.error'));
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => __('trans.message.error')
+            ]);
         } catch (Exception $e) {
-            return to_route('admin.slider.index')->with($this->error, $e->getMessage());
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
-    public function restore(int $id)
+    public function restore(int $id): JsonResponse
     {
         try {
-            $brand = $this->sliderInterface->restore($id);
+            $slider = $this->sliderInterface->restore($id);
 
-            if ($brand) {
-                return to_route('admin.slider.index')->with($this->success, __('trans.message.success'));
+            if ($slider) {
+                return response()->json([
+                    'result' => true,
+                    'title' => __('trans.message.title.success'),
+                    'message' => __('trans.message.success')
+                ]);
             }
 
-            return to_route('admin.slider.index')->with($this->error, __('trans.message.error'));
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => __('trans.message.error')
+            ]);
         } catch (Exception $e) {
-            return to_route('admin.slider.index')->with($this->error, $e->getMessage());
+            return response()->json([
+                'result' => false,
+                'title' => __('trans.message.title.error'),
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
-    public function checkExistData(Request $request)
+    public function checkExistData(Request $request): JsonResponse
     {
-        $input = $request->only(['url']);
+        $input = $request->only(['id', 'url']);
         $result = $this->sliderInterface->existData($input);
 
         return response()->json([
-            'valid' => $result,
+            'valid' => !$result,
         ]);
     }
 }

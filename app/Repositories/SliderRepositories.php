@@ -4,25 +4,20 @@ namespace App\Repositories;
 
 use App\Interfaces\SliderInterface;
 use App\Models\Slider;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class SliderRepositories implements SliderInterface
 {
     public function getList(array $data): array
     {
-        $query = SLider::query();
-
-        if (isset($data['search']['name']) && $data['search']['name'] != '') {
-            $query->where('name', 'LIKE', '%'.trim($data['search']['name'].'%'));
-        }
-
-        if (isset($data['search']['status']) && $data['search']['status'] != '') {
-            $query->where('status', $data['search']['status']);
-        }
-
-        if (isset($data['search']['onlyTrashed'])) {
+        $query = SLider::when(isset($data['name']), function (Builder $query) use ($data) {
+            $query->where('name', 'LIKE', '%' . trim($data['name'] . '%'));
+        })->when(isset($data['status']), function (Builder $query) use ($data) {
+            $query->where('status', $data['status']);
+        })->when($data['onlyTrashed'], function (Builder $query) {
             $query->onlyTrashed();
-        }
+        });
 
         $result['total'] = $query->count();
 
@@ -72,13 +67,17 @@ class SliderRepositories implements SliderInterface
 
     public function restore(int $id): bool|int
     {
-        $slider = Slider::findOrFail($id);
+        $slider = Slider::onlyTrashed()->findOrFail($id);
 
         return $slider->restore();
     }
 
     public function existData(array $data): bool
     {
-        return Slider::where('url', $data['url'])->exists();
+        return Slider::where('url', $data['url'])
+            ->when($data['id'], function (Builder $query) use ($data) {
+                $query->where('id', '!=', $data['id']);
+            })
+            ->exists();
     }
 }
