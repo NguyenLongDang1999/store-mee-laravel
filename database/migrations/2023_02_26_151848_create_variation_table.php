@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('attribute_id');
-            $table->unique(['name', 'attribute_id']);
         });
 
         Schema::table('variation', function (Blueprint $table) {

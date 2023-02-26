@@ -36,10 +36,13 @@ return [
         'update' => 'Cập nhật thuộc tính',
     ],
     'variation' => [
-        'name' => 'Biến thể thuộc tính',
-        'value' => 'Giá trị',
-        'create' => 'Thêm giá trị',
-        'delete' => 'Xóa'
+        'name' => 'Thuộc tính (Giá trị)',
+        'manager' => 'Quản lý thuộc tính (Giá trị)',
+        'manager_recycle' => 'Quản lý thuộc tính (Giá trị - Thùng rác)',
+        'title' => 'Tiêu đề thuộc tính (Giá trị)',
+        'list' => 'Danh sách thuộc tính (Giá trị)',
+        'create' => 'Thêm mới thuộc tính (Giá trị)',
+        'update' => 'Cập nhật thuộc tính (Giá trị)',
     ],
     'slider' => [
         'manager' => 'Quản lý Slider',

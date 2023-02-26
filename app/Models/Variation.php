@@ -11,6 +11,8 @@ class Variation extends Model
     use HasFactory;
 
     protected $table = 'variation';
+    public $timestamps = false;
+
 
     protected $fillable = [
         'name',

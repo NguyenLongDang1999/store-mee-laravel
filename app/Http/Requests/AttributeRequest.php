@@ -30,7 +30,6 @@ class AttributeRequest extends FormRequest
             ],
             'slug' => 'nullable',
             'category_id' => 'nullable',
-            'variation.*.value' => 'nullable|max:30',
             'description' => 'max:160',
         ];
     }

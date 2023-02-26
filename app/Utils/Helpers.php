@@ -41,6 +41,12 @@ function adminMenu(): array
                     'icon' => 'ti ti-color-picker',
                     'href' => route('admin.attribute.index'),
                 ],
+                [
+                    'key' => config('constant.route.variation'),
+                    'title' => __('trans.variation.name'),
+                    'icon' => 'ti ti-color-picker',
+                    'href' => route('admin.variation.index'),
+                ],
             ],
         ],
     ];

@@ -4,6 +4,8 @@ namespace App\Interfaces;
 
 interface AttributeInterface
 {
+    public function all();
+
     public function getList(array $data);
 
     public function find(int $id);

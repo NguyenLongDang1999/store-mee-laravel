@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttributeRequest;
 use App\Interfaces\AttributeInterface;
-use App\Interfaces\VariationInterface;
 use App\Interfaces\CategoryInterface;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 class AttributeController extends Controller
 {
@@ -22,8 +20,7 @@ class AttributeController extends Controller
 
     public function __construct(
         private readonly CategoryInterface  $categoryInterface,
-        private readonly AttributeInterface $attributeInterface,
-        private readonly VariationInterface $variationInterface
+        private readonly AttributeInterface $attributeInterface
     )
     {
         $this->success = config('constant.message.success');
@@ -57,19 +54,7 @@ class AttributeController extends Controller
     {
         try {
             $input = $request->validated();
-            $variationFlatten = Arr::flatten($input['variation']);
-            $attributeFind = $this->attributeInterface->create($input);
-            $variation = [];
-
-            foreach ($variationFlatten as $item) {
-                $variation[] = Arr::add(['attribute_id' => $attributeFind->id], 'name', $item);
-            }
-
-            $filtered = Arr::where($variation, function (mixed $value) {
-                return !is_null($value['name']);
-            });
-
-            $this->variationInterface->insertMany($filtered);
+            $this->attributeInterface->create($input);
 
             return to_route('admin.attribute.index')->with($this->success, __('trans.message.success'));
         } catch (Exception $e) {
@@ -91,18 +76,6 @@ class AttributeController extends Controller
         try {
             $input = $request->validated();
             $this->attributeInterface->update($input, $id);
-            $variationFlatten = Arr::flatten($input['variation']);
-            $variation = [];
-
-            foreach ($variationFlatten as $item) {
-                $variation[] = Arr::add(['attribute_id' => $id], 'name', $item);
-            }
-
-            $filtered = Arr::where($variation, function (mixed $value) {
-                return !is_null($value['name']);
-            });
-
-            $this->variationInterface->insertMany($filtered, $id);
 
             return to_route('admin.attribute.index')->with($this->success, __('trans.message.success'));
         } catch (Exception $e) {

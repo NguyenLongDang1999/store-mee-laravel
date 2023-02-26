@@ -11,7 +11,7 @@ class VariationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,27 @@ class VariationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => [
+                'required',
+                'max:50'
+            ],
+            'attribute_id' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => __('trans.validation.required'),
+            'max' => __('trans.validation.max.string'),
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => __('trans.attribute.title'),
+            'attribute_id' => __('trans.attribute.name'),
         ];
     }
 }

@@ -9,6 +9,18 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AttributeRepositories implements AttributeInterface
 {
+    public function all(): array
+    {
+        $getAttributeList = Attribute::latest()->get(['id', 'name']);
+        $option = ['' => __('trans.empty')];
+
+        foreach ($getAttributeList as $item) {
+            $option[$item->id] = e($item->name);
+        }
+
+        return $option;
+    }
+
     public function getList(array $data): array
     {
         $query = Attribute::with('category')

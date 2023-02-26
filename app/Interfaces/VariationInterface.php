@@ -6,9 +6,9 @@ interface VariationInterface
 {
     public function find(int $id);
 
-    public function create(array $data);
+    public function getList(array $data);
 
-    public function insertMany(array $data);
+    public function create(array $data);
 
     public function update(array $data, int $id);
 
