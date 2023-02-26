@@ -20,7 +20,7 @@ function adminMenu(): array
                 [
                     'key' => config('constant.route.slider'),
                     'title' => __('trans.slider.name'),
-                    'icon' => 'ti ti-home',
+                    'icon' => 'ti ti-speakerphone',
                     'href' => route('admin.slider.index'),
                 ],
                 [
