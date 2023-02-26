@@ -14,6 +14,7 @@ $(function () {
 
     const bootstrapSelect = $('.selectpicker'),
         flatpickr = $('.flatpickr'),
+        formRepeater = $('.form-repeater'),
         imageFileInput = $('.image-file-input'),
         imageFileReset = $('.image-file-reset'),
         toastPlacementExample = $('.toast-placement-ex'),
@@ -31,6 +32,33 @@ $(function () {
             altInput: true,
             altFormat: 'd-m-Y H:i',
             dateFormat: 'Y-m-d H:i'
+        });
+    }
+
+    if (formRepeater.length) {
+        const variationItem = $('.variation-item')
+        let row = variationItem.length + 1;
+        formRepeater.on('submit', function (e) {
+            e.preventDefault();
+        });
+        formRepeater.repeater({
+            show: function () {
+                const formControl = $(this).find('.form-control');
+                const formLabel = $(this).find('.form-label');
+
+                formControl.each(function (i) {
+                    const id = 'value-' + row;
+                    $(formControl[i]).attr('id', id).removeAttr('disabled');
+                    $(formLabel[i]).attr('for', id);
+                });
+
+                row++;
+
+                $(this).slideDown();
+            },
+            hide: function (e) {
+                $(this).slideUp();
+            }
         });
     }
 

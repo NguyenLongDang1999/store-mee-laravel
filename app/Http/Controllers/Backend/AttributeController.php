@@ -3,37 +3,38 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BrandRequest;
-use App\Interfaces\BrandInterface;
+use App\Http\Requests\AttributeRequest;
+use App\Interfaces\AttributeInterface;
+use App\Interfaces\VariationInterface;
 use App\Interfaces\CategoryInterface;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
-class BrandController extends Controller
+class AttributeController extends Controller
 {
-    private string $path;
-
     private string $error;
 
     private string $success;
 
     public function __construct(
-        private readonly CategoryInterface $categoryInterface,
-        private readonly BrandInterface $brandInterface
-    ) {
+        private readonly CategoryInterface  $categoryInterface,
+        private readonly AttributeInterface $attributeInterface,
+        private readonly VariationInterface $variationInterface
+    )
+    {
         $this->success = config('constant.message.success');
         $this->error = config('constant.message.error');
-        $this->path = config('constant.route.brand');
     }
 
     public function index(): View
     {
         $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
-        return view('backend.brand.index', compact('getCategoryList'));
+        return view('backend.attribute.index', compact('getCategoryList'));
     }
 
     public function recycle(): View
@@ -41,61 +42,78 @@ class BrandController extends Controller
         $isRecyclePage = true;
         $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
-        return view('backend.brand.index', compact('getCategoryList', 'isRecyclePage'));
+        return view('backend.attribute.index', compact('getCategoryList', 'isRecyclePage'));
     }
 
     public function create(): View
     {
-        $router = route('admin.brand.store');
+        $router = route('admin.attribute.store');
         $getCategoryList = $this->categoryInterface->getCategoryRecursive();
 
-        return view('backend.brand.create_edit', compact('router', 'getCategoryList'));
+        return view('backend.attribute.create_edit', compact('router', 'getCategoryList'));
     }
 
-    public function store(BrandRequest $request): RedirectResponse
+    public function store(AttributeRequest $request): RedirectResponse
     {
         try {
             $input = $request->validated();
-            $input['image_uri'] = $request->hasFile('image_uri') ? uploadFile($this->path, $input['image_uri']) : null;
+            $variationFlatten = Arr::flatten($input['variation']);
+            $attributeFind = $this->attributeInterface->create($input);
+            $variation = [];
 
-            $this->brandInterface->create($input);
+            foreach ($variationFlatten as $item) {
+                $variation[] = Arr::add(['attribute_id' => $attributeFind->id], 'name', $item);
+            }
 
-            return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
+            $filtered = Arr::where($variation, function (mixed $value) {
+                return !is_null($value['name']);
+            });
+
+            $this->variationInterface->insertMany($filtered);
+
+            return to_route('admin.attribute.index')->with($this->success, __('trans.message.success'));
         } catch (Exception $e) {
-            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
+            return to_route('admin.attribute.index')->with($this->error, $e->getMessage());
         }
     }
 
     public function edit(int $id): View
     {
-        $row = $this->brandInterface->find($id);
+        $row = $this->attributeInterface->find($id);
         $getCategoryList = $this->categoryInterface->getCategoryRecursive();
-        $router = route('admin.brand.update', $id);
+        $router = route('admin.attribute.update', $id);
 
-        return view('backend.brand.create_edit', compact('row', 'router', 'getCategoryList'));
+        return view('backend.attribute.create_edit', compact('row', 'router', 'getCategoryList'));
     }
 
-    public function update(BrandRequest $request, int $id): RedirectResponse
+    public function update(AttributeRequest $request, int $id): RedirectResponse
     {
         try {
             $input = $request->validated();
+            $this->attributeInterface->update($input, $id);
+            $variationFlatten = Arr::flatten($input['variation']);
+            $variation = [];
 
-            if ($request->hasFile('image_uri')) {
-                $input['image_uri'] = uploadFile($this->path, $input['image_uri']);
+            foreach ($variationFlatten as $item) {
+                $variation[] = Arr::add(['attribute_id' => $id], 'name', $item);
             }
 
-            $this->brandInterface->update($input, $id);
+            $filtered = Arr::where($variation, function (mixed $value) {
+                return !is_null($value['name']);
+            });
 
-            return to_route('admin.brand.index')->with($this->success, __('trans.message.success'));
+            $this->variationInterface->insertMany($filtered, $id);
+
+            return to_route('admin.attribute.index')->with($this->success, __('trans.message.success'));
         } catch (Exception $e) {
-            return to_route('admin.brand.index')->with($this->error, $e->getMessage());
+            return to_route('admin.attribute.index')->with($this->error, $e->getMessage());
         }
     }
 
     public function getList(Request $request): JsonResponse
     {
         $input = $request->input();
-        $results = $this->brandInterface->getList($input);
+        $results = $this->attributeInterface->getList($input);
 
         $data = [];
         $data['iTotalRecords'] = $data['iTotalDisplayRecords'] = $results['total'];
@@ -105,18 +123,15 @@ class BrandController extends Controller
             foreach ($results['model'] as $item) {
                 $data['aaData'][] = [
                     'id' => $item->id,
-                    'image_uri' => getFile($item->image_uri),
                     'imageUriCategory' => getFile($item->category?->image_uri),
                     'name' => e(str()->limit($item->name, 20)),
                     'categoryName' => e(str()->limit($item->category?->name, 20)) ?? '-',
-                    'status' => $item->status,
-                    'popular' => $item->popular,
                     'created_at' => $item->created_at->format('d-m-Y'),
                     'updated_at' => $item->updated_at->format('d-m-Y'),
-                    'edit_pages' => route('admin.brand.edit', $item->id),
+                    'edit_pages' => route('admin.attribute.edit', $item->id),
                     'edit_pages_category' => $item->category?->id ? route('admin.category.edit', $item->category?->id) : '',
-                    'delete' => route('admin.brand.delete', $item->id),
-                    'restore' => route('admin.brand.restore', $item->id),
+                    'delete' => route('admin.attribute.delete', $item->id),
+                    'restore' => route('admin.attribute.restore', $item->id),
                 ];
             }
         }
@@ -127,9 +142,9 @@ class BrandController extends Controller
     public function delete(int $id): JsonResponse
     {
         try {
-            $brand = $this->brandInterface->delete($id);
+            $attribute = $this->attributeInterface->delete($id);
 
-            if ($brand) {
+            if ($attribute) {
                 return response()->json([
                     'result' => true,
                     'title' => __('trans.message.title.success'),
@@ -154,9 +169,9 @@ class BrandController extends Controller
     public function restore(int $id): JsonResponse
     {
         try {
-            $brand = $this->brandInterface->restore($id);
+            $attribute = $this->attributeInterface->restore($id);
 
-            if ($brand) {
+            if ($attribute) {
                 return response()->json([
                     'result' => true,
                     'title' => __('trans.message.title.success'),
@@ -182,7 +197,7 @@ class BrandController extends Controller
     {
         $input = $request->only(['id', 'name']);
         $input['slug'] = str()->slug($input['name']);
-        $result = $this->brandInterface->existData($input);
+        $result = $this->attributeInterface->existData($input);
 
         return response()->json([
             'valid' => !$result,

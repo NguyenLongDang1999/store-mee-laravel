@@ -26,6 +26,21 @@ return [
         'create' => 'Thêm mới thương hiệu',
         'update' => 'Cập nhật thương hiệu',
     ],
+    'attribute' => [
+        'manager' => 'Quản lý thuộc tính',
+        'manager_recycle' => 'Quản lý thuộc tính (Thùng rác)',
+        'name' => 'Thuộc tính',
+        'title' => 'Tiêu đề thuộc tính',
+        'list' => 'Danh sách thuộc tính',
+        'create' => 'Thêm mới thuộc tính',
+        'update' => 'Cập nhật thuộc tính',
+    ],
+    'variation' => [
+        'name' => 'Biến thể thuộc tính',
+        'value' => 'Giá trị',
+        'create' => 'Thêm giá trị',
+        'delete' => 'Xóa'
+    ],
     'slider' => [
         'manager' => 'Quản lý Slider',
         'manager_recycle' => 'Quản lý Slider (Thùng rác)',

@@ -35,6 +35,12 @@ function adminMenu(): array
                     'icon' => 'ti ti-trademark',
                     'href' => route('admin.brand.index'),
                 ],
+                [
+                    'key' => config('constant.route.attribute'),
+                    'title' => __('trans.attribute.name'),
+                    'icon' => 'ti ti-color-picker',
+                    'href' => route('admin.attribute.index'),
+                ],
             ],
         ],
     ];

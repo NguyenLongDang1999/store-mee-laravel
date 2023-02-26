@@ -18,6 +18,7 @@ return [
         'category' => 'category',
         'brand' => 'brand',
         'slider' => 'slider',
+        'attribute' => 'attribute'
     ],
     'bunny' => [
         'cdn_upload' => env('API_BUNNY_UPLOAD_CDN'),
