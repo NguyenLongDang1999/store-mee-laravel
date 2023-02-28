@@ -2,11 +2,13 @@
 
 // Backend
 use App\Http\Controllers\Backend\AttributeController;
+use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\SliderController;
 use App\Http\Controllers\Backend\VariationController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,8 +22,37 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+
+// ADMIN:: Auth
+Route::controller(AuthController::class)
+    ->name('admin.auth.')
+    ->prefix('cms-admin')
+    ->group(function () {
+        // Register
+        Route::get('register', 'register')->name('register');
+        Route::post('store-register', 'storeRegister')->name('register.store');
+
+        // Login
+        Route::get('login', 'login')->name('login');
+        Route::post('store-login', 'storeLogin')->name('login.store');
+
+        // Logout
+        Route::post('logout', 'logout')->name('logout');
+    });
+
 // Backend
-Route::prefix('cms-admin')->name('admin.')->group(function () {
+Route::prefix('cms-admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
     // Dashboard
     Route::controller(DashboardController::class)
         ->name('dashboard.')

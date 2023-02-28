@@ -4,8 +4,8 @@ namespace App\Repositories;
 
 use App\Interfaces\CategoryInterface;
 use App\Models\Category;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class CategoryRepositories implements CategoryInterface
 {
@@ -13,7 +13,7 @@ class CategoryRepositories implements CategoryInterface
     {
         $query = Category::with('parent')
             ->when(isset($data['name']), function (Builder $query) use ($data) {
-                $query->where('name', 'LIKE', '%' . trim($data['name'] . '%'));
+                $query->where('name', 'LIKE', '%'.trim($data['name'].'%'));
             })
             ->when(isset($data['parent_id']), function (Builder $query) use ($data) {
                 $query->where('parent_id', $data['parent_id']);
@@ -104,7 +104,7 @@ class CategoryRepositories implements CategoryInterface
     {
         $dash .= '|--- ';
         foreach ($child as $category) {
-            $option[$category->id] = $dash . e($category->name);
+            $option[$category->id] = $dash.e($category->name);
 
             if (count($category->children) > 0) {
                 return $this->categoryRecursive($category->children, $option, $dash);

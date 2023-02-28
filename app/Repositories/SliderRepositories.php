@@ -12,7 +12,7 @@ class SliderRepositories implements SliderInterface
     public function getList(array $data): array
     {
         $query = SLider::when(isset($data['name']), function (Builder $query) use ($data) {
-            $query->where('name', 'LIKE', '%' . trim($data['name'] . '%'));
+            $query->where('name', 'LIKE', '%'.trim($data['name'].'%'));
         })->when(isset($data['status']), function (Builder $query) use ($data) {
             $query->where('status', $data['status']);
         })->when($data['onlyTrashed'], function (Builder $query) {

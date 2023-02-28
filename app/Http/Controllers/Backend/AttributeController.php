@@ -19,10 +19,9 @@ class AttributeController extends Controller
     private string $success;
 
     public function __construct(
-        private readonly CategoryInterface  $categoryInterface,
+        private readonly CategoryInterface $categoryInterface,
         private readonly AttributeInterface $attributeInterface
-    )
-    {
+    ) {
         $this->success = config('constant.message.success');
         $this->error = config('constant.message.error');
     }
@@ -121,20 +120,20 @@ class AttributeController extends Controller
                 return response()->json([
                     'result' => true,
                     'title' => __('trans.message.title.success'),
-                    'message' => __('trans.message.success')
+                    'message' => __('trans.message.success'),
                 ]);
             }
 
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => __('trans.message.error')
+                'message' => __('trans.message.error'),
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
     }
@@ -148,20 +147,20 @@ class AttributeController extends Controller
                 return response()->json([
                     'result' => true,
                     'title' => __('trans.message.title.success'),
-                    'message' => __('trans.message.success')
+                    'message' => __('trans.message.success'),
                 ]);
             }
 
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => __('trans.message.error')
+                'message' => __('trans.message.error'),
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
     }
@@ -173,7 +172,7 @@ class AttributeController extends Controller
         $result = $this->attributeInterface->existData($input);
 
         return response()->json([
-            'valid' => !$result,
+            'valid' => ! $result,
         ]);
     }
 }

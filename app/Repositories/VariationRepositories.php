@@ -4,8 +4,8 @@ namespace App\Repositories;
 
 use App\Interfaces\VariationInterface;
 use App\Models\Variation;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class VariationRepositories implements VariationInterface
 {
@@ -13,7 +13,7 @@ class VariationRepositories implements VariationInterface
     {
         $query = Variation::with('attribute')
             ->when(isset($data['name']), function (Builder $query) use ($data) {
-                $query->where('name', 'LIKE', '%' . trim($data['name'] . '%'));
+                $query->where('name', 'LIKE', '%'.trim($data['name'].'%'));
             })->when(isset($data['attribute_id']), function (Builder $query) use ($data) {
                 $query->where('attribute_id', $data['attribute_id']);
             });

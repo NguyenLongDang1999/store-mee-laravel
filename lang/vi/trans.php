@@ -79,7 +79,7 @@ return [
         'back' => 'Quay lại',
         'save' => 'Lưu lại',
         'cancel' => 'Hủy bỏ',
-        'confirm' => 'Xác nhận'
+        'confirm' => 'Xác nhận',
     ],
     'image' => [
         'name' => 'Hình đại diện',
@@ -94,10 +94,10 @@ return [
     ],
     'confirm' => [
         'title' => [
-            'delete' => 'Xác nhận xóa'
+            'delete' => 'Xác nhận xóa',
         ],
         'update' => 'Bạn có chắc chắn muốn cập nhật dữ liệu này không?',
-        'delete' => 'Bạn có chắc chắn muốn xóa dữ liệu này không?'
+        'delete' => 'Bạn có chắc chắn muốn xóa dữ liệu này không?',
     ],
     'validation' => [
         'required' => ':attribute không được bỏ trống.',

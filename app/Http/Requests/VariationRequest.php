@@ -24,7 +24,7 @@ class VariationRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                'max:50'
+                'max:50',
             ],
             'attribute_id' => 'required',
         ];

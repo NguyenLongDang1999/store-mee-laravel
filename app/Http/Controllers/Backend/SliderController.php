@@ -21,8 +21,7 @@ class SliderController extends Controller
 
     public function __construct(
         private readonly SliderInterface $sliderInterface,
-    )
-    {
+    ) {
         $this->success = config('constant.message.success');
         $this->error = config('constant.message.error');
         $this->path = config('constant.route.slider');
@@ -124,20 +123,20 @@ class SliderController extends Controller
                 return response()->json([
                     'result' => true,
                     'title' => __('trans.message.title.success'),
-                    'message' => __('trans.message.success')
+                    'message' => __('trans.message.success'),
                 ]);
             }
 
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => __('trans.message.error')
+                'message' => __('trans.message.error'),
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
     }
@@ -151,20 +150,20 @@ class SliderController extends Controller
                 return response()->json([
                     'result' => true,
                     'title' => __('trans.message.title.success'),
-                    'message' => __('trans.message.success')
+                    'message' => __('trans.message.success'),
                 ]);
             }
 
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => __('trans.message.error')
+                'message' => __('trans.message.error'),
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'result' => false,
                 'title' => __('trans.message.title.error'),
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
     }
@@ -175,7 +174,7 @@ class SliderController extends Controller
         $result = $this->sliderInterface->existData($input);
 
         return response()->json([
-            'valid' => !$result,
+            'valid' => ! $result,
         ]);
     }
 }

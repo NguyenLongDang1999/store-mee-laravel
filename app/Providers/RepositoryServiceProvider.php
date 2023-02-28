@@ -2,15 +2,15 @@
 
 namespace App\Providers;
 
+use App\Interfaces\AttributeInterface;
 use App\Interfaces\BrandInterface;
 use App\Interfaces\CategoryInterface;
 use App\Interfaces\SliderInterface;
-use App\Interfaces\AttributeInterface;
 use App\Interfaces\VariationInterface;
-use App\Repositories\SliderRepositories;
+use App\Repositories\AttributeRepositories;
 use App\Repositories\BrandRepositories;
 use App\Repositories\CategoryRepositories;
-use App\Repositories\AttributeRepositories;
+use App\Repositories\SliderRepositories;
 use App\Repositories\VariationRepositories;
 use Illuminate\Support\ServiceProvider;
 

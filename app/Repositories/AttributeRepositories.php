@@ -4,8 +4,8 @@ namespace App\Repositories;
 
 use App\Interfaces\AttributeInterface;
 use App\Models\Attribute;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class AttributeRepositories implements AttributeInterface
 {
@@ -25,7 +25,7 @@ class AttributeRepositories implements AttributeInterface
     {
         $query = Attribute::with('category')
             ->when(isset($data['name']), function (Builder $query) use ($data) {
-                $query->where('name', 'LIKE', '%' . trim($data['name'] . '%'));
+                $query->where('name', 'LIKE', '%'.trim($data['name'].'%'));
             })
             ->when(isset($data['category_id']), function (Builder $query) use ($data) {
                 $query->where('category_id', $data['category_id']);
