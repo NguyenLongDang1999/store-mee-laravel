@@ -9,6 +9,10 @@ return [
         'active' => 1,
         'inactive' => 0,
     ],
+    'price' => [
+        'money' => 1,
+        'percent' => 0,
+    ],
     'message' => [
         'success' => 'success',
         'error' => 'error',
@@ -20,6 +24,7 @@ return [
         'slider' => 'slider',
         'attribute' => 'attribute',
         'variation' => 'variation',
+        'product' => 'product',
     ],
     'bunny' => [
         'cdn_upload' => env('API_BUNNY_UPLOAD_CDN'),

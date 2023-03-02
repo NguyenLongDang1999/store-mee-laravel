@@ -3,6 +3,19 @@
 return [
     'product' => [
         'manager' => 'Quản lý sản phẩm',
+        'sku' => 'SKU',
+        'price' => 'Giá tiền',
+        'quantity' => 'Số lượng',
+        'type_discount' => 'Loại giảm giá',
+        'price_discount' => 'Số tiền giảm',
+        'price_percent' => 'Giảm theo phần trăm',
+        'price_money' => 'Giảm theo giá tiền',
+        'manager_recycle' => 'Quản lý sản phẩm (Thùng rác)',
+        'name' => 'Sản phẩm',
+        'title' => 'Tiêu đề sản phẩm',
+        'list' => 'Danh sách sản phẩm',
+        'create' => 'Thêm mới sản phẩm',
+        'update' => 'Cập nhật sản phẩm',
     ],
     'dashboard' => [
         'name' => 'Thống kê',
@@ -34,6 +47,7 @@ return [
         'list' => 'Danh sách thuộc tính',
         'create' => 'Thêm mới thuộc tính',
         'update' => 'Cập nhật thuộc tính',
+        'setting' => 'Thiết lập thuộc tính'
     ],
     'variation' => [
         'name' => 'Thuộc tính (Giá trị)',
@@ -118,6 +132,7 @@ return [
     'end_date' => 'Ngày áp dụng (Kết thúc)',
     'slug' => 'Đường dẫn URL',
     'info' => 'Thông tin chung',
+    'setting_price' => 'Thiết lập giá tiền',
     'empty' => '--- Vui lòng chọn ---',
     'search' => 'Tìm kiếm',
     'created_at' => 'Ngày tạo',

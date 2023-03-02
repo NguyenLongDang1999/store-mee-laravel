@@ -14,11 +14,13 @@ $(function () {
 
     const bootstrapSelect = $('.selectpicker'),
         flatpickr = $('.flatpickr'),
+        numeralMask = document.getElementsByClassName('numeral-mask'),
         imageFileInput = $('.image-file-input'),
         imageFileReset = $('.image-file-reset'),
         toastPlacementExample = $('.toast-placement-ex'),
         actionDialog = $('#action-dialog'),
-        btnAction = $('#btn-action')
+        btnAction = $('#btn-action'),
+        categoryVal = $('#product-form #category_id')
 
     // Plugins
     if (bootstrapSelect.length) {
@@ -32,6 +34,17 @@ $(function () {
             altFormat: 'd-m-Y H:i',
             dateFormat: 'Y-m-d H:i'
         });
+    }
+
+    if (numeralMask.length) {
+        const numberFormat = Array.from(numeralMask)
+
+        numberFormat.forEach(function (field) {
+            new Cleave(field, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand'
+            });
+        })
     }
 
     // Methods
@@ -62,6 +75,15 @@ $(function () {
         actionDataWithDialog(dataID, action)
     })
 
+    categoryVal.on('change', function (e) {
+        e.preventDefault()
+        changeData($(this).val(), '.brand-data')
+    })
+
+    if (categoryVal.length && categoryVal[0]?.dataset?.brand) {
+        changeData(categoryVal.val(), '.brand-data', categoryVal[0]?.dataset?.brand)
+    }
+
     // Functions
     function actionDataWithDialog(dataID, action) {
         $.ajax({
@@ -89,6 +111,24 @@ $(function () {
             toastResult.text(resp.message)
             toastPlacement = new bootstrap.Toast(toastPlacementExample);
             toastPlacement.show();
+        })
+    }
+
+    function changeData(dataID, className, val = '') {
+        $.ajax({
+            type: "post",
+            url: url_change_data,
+            data: {
+                data: dataID
+            }
+        }).done(function (resp) {
+            $(className).replaceWith(resp)
+
+            if (val) {
+                $(className).selectpicker('val', [val])
+            } else {
+                $(className).selectpicker()
+            }
         })
     }
 })

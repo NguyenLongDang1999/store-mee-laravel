@@ -47,6 +47,12 @@ function adminMenu(): array
                     'icon' => 'ti ti-color-picker',
                     'href' => route('admin.variation.index'),
                 ],
+                [
+                    'key' => config('constant.route.product'),
+                    'title' => __('trans.product.name'),
+                    'icon' => 'ti ti-product-hunt',
+                    'href' => route('admin.product.index'),
+                ],
             ],
         ],
     ];
@@ -76,6 +82,14 @@ function optionPopular(): array
         '' => __('trans.empty'),
         config('constant.popular.active') => __('trans.popular.active'),
         config('constant.popular.inactive') => __('trans.popular.inactive'),
+    ];
+}
+
+function optionPrice(): array
+{
+    return [
+        config('constant.price.money') => __('trans.product.price_money'),
+        config('constant.price.percent') => __('trans.product.price_percent'),
     ];
 }
 

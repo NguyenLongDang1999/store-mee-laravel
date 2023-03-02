@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\SliderController;
 use App\Http\Controllers\Backend\VariationController;
 use App\Http\Controllers\ProfileController;
@@ -117,6 +118,9 @@ Route::prefix('cms-admin')->name('admin.')->middleware(['auth:admin'])->group(fu
             // Restore
             Route::post('restore/{id}', 'restore')->name('restore');
 
+            // Get Data With Category
+            Route::post('get-brand-with-category', 'getBrandWithCategory')->name('getBrandWithCategory');
+
             // Exists
             Route::post('exist-data', 'checkExistData')->name('checkExistData');
         });
@@ -185,6 +189,36 @@ Route::prefix('cms-admin')->name('admin.')->middleware(['auth:admin'])->group(fu
     Route::controller(VariationController::class)
         ->name('variation.')
         ->prefix('variation')
+        ->group(function () {
+            // List
+            Route::get('/', 'index')->name('index');
+            Route::get('get-list', 'getList')->name('getList');
+
+            // Recycle List
+            Route::get('recycle', 'recycle')->name('recycle');
+
+            // Create
+            Route::get('create', 'create')->name('create');
+            Route::post('store', 'store')->name('store');
+
+            // Edit
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'update')->name('update');
+
+            // Delete
+            Route::post('delete/{id}', 'delete')->name('delete');
+
+            // Restore
+            Route::post('restore/{id}', 'restore')->name('restore');
+
+            // Exists
+            Route::post('exist-data', 'checkExistData')->name('checkExistData');
+        });
+
+    // Product
+    Route::controller(ProductController::class)
+        ->name('product.')
+        ->prefix('product')
         ->group(function () {
             // List
             Route::get('/', 'index')->name('index');

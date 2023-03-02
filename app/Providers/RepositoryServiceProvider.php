@@ -7,11 +7,13 @@ use App\Interfaces\BrandInterface;
 use App\Interfaces\CategoryInterface;
 use App\Interfaces\SliderInterface;
 use App\Interfaces\VariationInterface;
+use App\Interfaces\ProductInterface;
 use App\Repositories\AttributeRepositories;
 use App\Repositories\BrandRepositories;
 use App\Repositories\CategoryRepositories;
 use App\Repositories\SliderRepositories;
 use App\Repositories\VariationRepositories;
+use App\Repositories\ProductRepositories;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -44,6 +46,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             VariationInterface::class,
             VariationRepositories::class,
+        );
+
+        $this->app->bind(
+            ProductInterface::class,
+            ProductRepositories::class,
         );
     }
 

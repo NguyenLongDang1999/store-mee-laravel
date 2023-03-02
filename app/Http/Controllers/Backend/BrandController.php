@@ -22,8 +22,9 @@ class BrandController extends Controller
 
     public function __construct(
         private readonly CategoryInterface $categoryInterface,
-        private readonly BrandInterface $brandInterface
-    ) {
+        private readonly BrandInterface    $brandInterface
+    )
+    {
         $this->success = config('constant.message.success');
         $this->error = config('constant.message.error');
         $this->path = config('constant.route.brand');
@@ -185,7 +186,14 @@ class BrandController extends Controller
         $result = $this->brandInterface->existData($input);
 
         return response()->json([
-            'valid' => ! $result,
+            'valid' => !$result,
         ]);
+    }
+
+    public function getBrandWithCategory(Request $request)
+    {
+        $input = $request->only(['data']);
+        $result = $this->brandInterface->getBrandWithCategory($input['data']);
+        return html()->select('brand_id', $result)->value('')->class('selectpicker text-capitalize w-100 brand-data')->attribute('data-style', 'btn-default text-capitalize');
     }
 }

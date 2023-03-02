@@ -2,10 +2,8 @@
 
 namespace App\Interfaces;
 
-interface BrandInterface
+interface ProductInterface
 {
-    public function all();
-
     public function getList(array $data);
 
     public function find(int $id);
@@ -19,6 +17,4 @@ interface BrandInterface
     public function restore(int $id);
 
     public function existData(array $data);
-
-    public function getBrandWithCategory(int $id);
 }

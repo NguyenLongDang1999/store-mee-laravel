@@ -2,30 +2,21 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\BrandInterface;
-use App\Models\Brand;
+use App\Interfaces\ProductInterface;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class BrandRepositories implements BrandInterface
+class ProductRepositories implements ProductInterface
 {
-    public function all(): array
-    {
-        $getAttributeList = Brand::latest()->get(['id', 'name']);
-        $option = ['' => __('trans.empty')];
-
-        foreach ($getAttributeList as $item) {
-            $option[$item->id] = e($item->name);
-        }
-
-        return $option;
-    }
-
     public function getList(array $data): array
     {
-        $query = Brand::with('category')
+        $query = Product::with('brand', 'category')
             ->when(isset($data['name']), function (Builder $query) use ($data) {
                 $query->where('name', 'LIKE', '%'.trim($data['name'].'%'));
+            })
+            ->when(isset($data['brand_id']), function (Builder $query) use ($data) {
+                $query->where('brand_id', $data['brand_id']);
             })
             ->when(isset($data['category_id']), function (Builder $query) use ($data) {
                 $query->where('category_id', $data['category_id']);
@@ -65,53 +56,41 @@ class BrandRepositories implements BrandInterface
 
     public function find(int $id): Model
     {
-        return Brand::findOrFail($id);
+        return Product::findOrFail($id);
     }
 
     public function create(array $data): Model
     {
-        return Brand::create($data);
+        return Product::create($data);
     }
 
     public function update(array $data, int $id): bool
     {
-        $brand = Brand::findOrFail($id);
+        $product = Product::findOrFail($id);
 
-        return $brand?->fill($data)->save();
+        return $product?->fill($data)->save();
     }
 
     public function delete(int $id): bool
     {
-        $brand = Brand::findOrFail($id);
+        $product = Product::findOrFail($id);
 
-        return $brand->delete();
+        return $product->delete();
     }
 
     public function restore(int $id): bool|int
     {
-        $brand = Brand::onlyTrashed()->findOrFail($id);
+        $product = Product::onlyTrashed()->findOrFail($id);
 
-        return $brand->restore();
+        return $product->restore();
     }
 
     public function existData(array $data): bool
     {
-        return Brand::where('slug', $data['slug'])
+        return Product::where('slug', $data['slug'])
             ->when($data['id'], function (Builder $query) use ($data) {
                 $query->where('id', '!=', $data['id']);
             })
             ->exists();
-    }
-
-    public function getBrandWithCategory(int $id): array
-    {
-        $getAttributeList = Brand::where('category_id', $id)->latest()->get(['id', 'name']);
-        $option = ['' => __('trans.empty')];
-
-        foreach ($getAttributeList as $item) {
-            $option[$item->id] = e($item->name);
-        }
-
-        return $option;
     }
 }
